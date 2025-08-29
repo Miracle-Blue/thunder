@@ -36,8 +36,17 @@ extension ObjectExtension on Object? {
   /// ```dart
   /// final json = object.prettyJsonEncodedBody;
   /// ```
-  String get prettyJsonEncodedBody =>
-      const JsonEncoder.withIndent('  ').convert(jsonDecode(toString()));
+  String get prettyJsonEncodedBody {
+    try {
+      if (this == null || (this is String && (this as String).isEmpty)) {
+        return const JsonEncoder.withIndent('  ').convert(toString());
+      }
+
+      return const JsonEncoder.withIndent('  ').convert(jsonDecode(toString()));
+    } on Object catch (e) {
+      return 'Error: $e';
+    }
+  }
 }
 
 void _prettyJsonIsolate(List<Object?> args) {
