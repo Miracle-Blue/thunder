@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -225,37 +224,31 @@ ApiClientHandler _createHandler(
         // Read the response stream.
         int contentLength;
         Uint8List bytes;
+        final contentType =
+            streamedResponse.headers['content-type']?.toLowerCase() ?? '';
         try {
-          // contentLength = streamedResponse.contentLength ?? 0;
-          // if (contentLength > 0) {
-
-          final contentType =
-              streamedResponse.headers['content-type']?.toLowerCase() ?? '';
-          if (!contentType.contains('application/json')) {
-            throwError(
-              completer,
-              ApiClientException$Client(
-                code: 'invalid_content_type_error',
-                message: 'Response content type is not application/json.',
-                statusCode: statusCode,
-                error: null,
-                data: null,
-              ),
-              StackTrace.current,
-            );
-            return;
+          contentLength = streamedResponse.contentLength ?? 0;
+          if (contentLength > 0) {
+            if (!isSupportedContentType(contentType)) {
+              throwError(
+                completer,
+                ApiClientException$Client(
+                  code: 'invalid_content_type_error',
+                  message:
+                      'Response content type is not application/json or image or text or xml.',
+                  statusCode: statusCode,
+                  error: null,
+                  data: null,
+                ),
+                StackTrace.current,
+              );
+              return;
+            }
+            bytes = await streamedResponse.stream.toBytes();
+            contentLength = bytes.length;
+          } else {
+            bytes = Uint8List(0);
           }
-          bytes = await streamedResponse.stream.toBytes();
-          contentLength = bytes.length;
-
-          log('content-type: ${streamedResponse.headers['content-type']}');
-          log('content-length: ${streamedResponse.headers['content-length']}');
-          log('bytes: ${bytes.length}');
-          log('contentLength: ${streamedResponse.contentLength}');
-
-          // } else {
-          //   bytes = Uint8List(0);
-          // }
         } on Object catch (error, stackTrace) {
           throwError(
             completer,
@@ -274,15 +267,18 @@ ApiClientHandler _createHandler(
         // Decode the response.
         ApiClientResponse response;
         try {
-          final body = switch (bytes) {
-            final a when a.isEmpty => <String, Object?>{},
-            final a when a.first == 91 => jsonDecoderList.convert(bytes),
-            final a when a.first == 123 => jsonDecoderMap.convert(bytes),
-            _ => <String, Object?>{},
-          };
+          final body = (contentType.contains('application/json'))
+              ? switch (bytes) {
+                  final a when a.isEmpty => <String, Object?>{},
+                  final a when a.first == 91 => jsonDecoderList.convert(bytes),
+                  final a when a.first == 123 => jsonDecoderMap.convert(bytes),
+                  _ => <String, Object?>{},
+                }
+              : bytes;
 
           response = ApiClientResponse.json(
             switch (body) {
+              final a when a is Uint8List => a,
               final a when a is Map => a.cast<String, Object?>(),
               final a when a is List => {'data': a.cast<Object?>()},
               _ => <String, Object?>{},
@@ -319,6 +315,13 @@ ApiClientHandler _createHandler(
   }
 
   return middleware(httpHandler);
+}
+
+bool isSupportedContentType(String contentType) {
+  return contentType.contains('application/json') ||
+      contentType.contains('image') ||
+      contentType.contains('text') ||
+      contentType.contains('xml');
 }
 
 // --- Errors --- //

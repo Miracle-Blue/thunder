@@ -147,7 +147,8 @@ class LogButton extends StatelessWidget {
                       false => Text(
                           Helpers.getStatusCode(log),
                           style: TextStyle(
-                            color: switch (log.response?.statusCode) {
+                            color: switch (
+                                int.tryParse(Helpers.getStatusCode(log))) {
                               int i when i >= 200 && i < 300 =>
                                 const Color(0xFF2ccc84),
                               _ => AppColors.red,

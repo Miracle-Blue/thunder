@@ -86,7 +86,7 @@ final class ApiClientResponse {
   final int contentLength;
 
   /// The parsed JSON body of the HTTP response.
-  final Map<String, Object?> body;
+  final Object? body;
 
   /// Whether the connection should be kept alive for future requests.
   final bool persistentConnection;
