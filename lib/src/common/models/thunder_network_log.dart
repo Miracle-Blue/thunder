@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../extension/middleware_extensions.dart';
 import '../extension/string_extension.dart';
 
 /// Model class to store network request/response data
@@ -27,13 +27,13 @@ final class ThunderNetworkLog {
   final DateTime? receiveTime;
 
   /// The request options
-  final RequestOptions request;
+  final ApiClientRequest request;
 
   /// The response
-  final Response<Object?>? response;
+  final ApiClientResponse? response;
 
   /// The error
-  final DioException? error;
+  final Object? error;
 
   /// The duration of the request
   final Duration? duration;
@@ -60,9 +60,9 @@ final class ThunderNetworkLog {
   ThunderNetworkLog copyWith({
     DateTime? sendTime,
     DateTime? receiveTime,
-    RequestOptions? request,
-    Response<Object?>? response,
-    DioException? error,
+    ApiClientRequest? request,
+    ApiClientResponse? response,
+    Object? error,
     Duration? duration,
     int? sendBytes,
     int? receiveBytes,

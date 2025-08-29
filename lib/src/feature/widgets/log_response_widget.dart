@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/extension/middleware_extensions.dart';
 import '../../common/extension/object_extension.dart';
 import '../../common/models/thunder_network_log.dart';
 import '../../common/utils/app_colors.dart';
 import '../../common/utils/helpers.dart';
 import 'awaiting_response_widget.dart';
-import 'html_renderer.dart';
 import 'list_row_item.dart';
 
 /// A widget that displays the response of a network request.
@@ -25,8 +25,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
   bool _showJsonResponse = true;
   late Future<String> _jsonResponse;
   String get _contentType =>
-      widget.log.response?.headers['content-type']?.first ??
-      'content-type not found';
+      widget.log.response?.headers['content-type'] ?? 'content-type not found';
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
 
   /// Checks if the response body is considered large.
   bool get _isLargeResponseBody {
-    final data = widget.log.response?.data;
+    final data = widget.log.response?.body;
 
     return data != null && data.toString().length > 100000;
   }
@@ -45,7 +44,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
   /// Loads the json response asynchronously.
   Future<String> _loadJson() async {
     try {
-      return await (widget.log.response?.data).prettyJsonAsync;
+      return await widget.log.response?.body.prettyJsonAsync ?? '';
     } on Object catch (e) {
       return 'Error formatting JSON: ${e.toString()}';
     }
@@ -75,7 +74,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                 ListRowItem(name: 'Content-Type', value: _contentType),
 
                 /// Checking whether data is not null, not html, json response is enabled, and error is null.
-                if (widget.log.response?.data != null &&
+                if (widget.log.response?.body != null &&
                     !_contentType.contains('html') &&
                     _showJsonResponse &&
                     widget.log.error == null)
@@ -141,13 +140,6 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                    child: HtmlRenderer(
-                      htmlContent: widget.log.response?.data.toString() ?? '',
-                    ),
-                  ),
                 ],
 
                 if (widget.log.error != null) ...[
@@ -164,29 +156,35 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                   ),
 
                   /// When error data is html, we need to show the error data as html.
-                  if (widget.log.error?.response?.data.toString().contains(
+                  if ((widget.log.error as ApiClientException)
+                          .data
+                          ?.toString()
+                          .contains(
                             '!DOCTYPE html',
                           ) ??
                       false)
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                      child: HtmlRenderer(
-                        htmlContent:
-                            widget.log.error?.response?.data.toString() ?? '',
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                      child: Text(
+                        'Error (HTML body)',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     )
                   else
                     ListRowItem(
                       name: 'Error data',
-                      value: (widget.log.error?.response?.data as Object?)
+                      value: (widget.log.error as ApiClientException)
+                          .data
                           .prettyJson,
                       isJson: true,
                     ),
 
                   ListRowItem(
                     name: 'Error message',
-                    value: widget.log.error?.message.toString(),
+                    value: (widget.log.error as ApiClientException)
+                        .message
+                        .toString(),
                     isJson: true,
                   ),
                   ListRowItem(

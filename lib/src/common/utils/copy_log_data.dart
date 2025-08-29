@@ -1,4 +1,7 @@
+import 'package:http/http.dart' show Request;
+
 import '../extension/duration_extension.dart';
+import '../extension/middleware_extensions.dart';
 import '../extension/object_extension.dart';
 import '../models/thunder_network_log.dart';
 
@@ -75,32 +78,32 @@ class CopyLogData {
       };
 
   String get _queryParams =>
-      switch (log.request.uri.queryParameters.isNotEmpty) {
+      switch (log.request.url.queryParameters.isNotEmpty) {
         true =>
-          'Request query params: ```json\n${log.request.uri.queryParameters.prettyJson}```\n',
+          'Request query params: ```json\n${log.request.url.queryParameters.prettyJson}```\n',
         false => '\r',
       };
 
-  String get _requestBody => switch (log.request.data != null) {
+  String get _requestBody => switch ((log.request as Request).body.isNotEmpty) {
         true =>
-          'Request body: ```json\n${(log.request.data as Object?).prettyJson}```\n',
+          'Request body: ```json\n${(log.request as Request).body.prettyJson}```\n',
         false => '\r',
       };
 
-  String get _responseBody => switch (log.response?.data != null) {
+  String get _responseBody => switch (log.response?.body != null) {
         true =>
-          'Response body: ```json\n${(log.response?.data).prettyJson}```\n',
+          'Response body: ```json\n${(log.response?.body).prettyJson}```\n',
         false => '\r',
       };
 
   /// Method that converts the [ThunderNetworkLog] to a copyable log data string
   String get toCopyableLogData {
     final buffer = StringBuffer()
-      ..writeln('Server: ${log.request.uri.host}')
+      ..writeln('Server: ${log.request.url.host}')
       ..writeln('Method: ${log.request.method}')
-      ..writeln('Endpoint: ${log.request.uri.path}')
+      ..writeln('Endpoint: ${log.request.url.path}')
       ..writeln(
-        'Status: ${log.response?.statusCode ?? log.error?.response?.statusCode}',
+        'Status: ${log.response?.statusCode ?? (log.error as ApiClientException).statusCode}',
       );
 
     if (log.response?.statusCode != null) {
@@ -137,7 +140,7 @@ class CopyLogData {
     } else {
       if (log.error != null) {
         buffer.write(
-          '```json\n${(log.error?.response?.data as Object?).prettyJson}```',
+          '```json\n${(log.error as ApiClientException).data?.prettyJson}```',
         );
       } else {
         buffer.write('Response body is empty');

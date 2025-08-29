@@ -1,14 +1,19 @@
-import 'dart:developer';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:thunder/thunder.dart';
 
-void main() {
-  final dio = Thunder.addDio(
-      Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com')));
+import 'api_client.dart';
 
-  dio.get<void>("/posts");
+void main() {
+  final mw = Thunder.middleware;
+
+  final apiClient = ApiClient(
+    uri: Uri.parse('https://jsonplaceholder.typicode.com'),
+    middlewares: <ApiClientMiddleware>[
+      mw,
+    ],
+  );
+
+  apiClient.get("/posts");
 
   runApp(const MyApp());
 }
@@ -21,18 +26,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final Dio _mainDio = Dio();
-  final Dio _httpDio =
-      Thunder.addDio(Dio(BaseOptions(baseUrl: 'https://httpbin.org')));
+  final _mainDio = ApiClient(
+    uri: Uri(),
+    middlewares: <ApiClientMiddleware>[
+      Thunder.middleware,
+    ],
+  );
+  final _httpDio = ApiClient(
+      uri: Uri.parse('https://httpbin.org'),
+      middlewares: <ApiClientMiddleware>[Thunder.middleware]);
 
   @override
   Widget build(BuildContext context) => MaterialApp(
         builder: (_, child) => Thunder(
-          dio: [
-            _httpDio,
-            _mainDio,
-            _httpDio,
-          ],
           child: child ?? SizedBox.shrink(),
         ),
         home: MyHomePage(
@@ -45,8 +51,8 @@ class _MyAppState extends State<MyApp> {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.httpDio, required this.mainDio});
 
-  final Dio httpDio;
-  final Dio mainDio;
+  final ApiClient httpDio;
+  final ApiClient mainDio;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -56,11 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
   static const Color _greenDark = Color(0xFF49cc90);
 
   void _runDioRequests() async {
-    final Dio jsonPlaceholderDio = Dio(
-      BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com'),
+    final ApiClient jsonPlaceholderDio = ApiClient(
+      uri: Uri.parse('https://jsonplaceholder.typicode.com'),
+      middlewares: <ApiClientMiddleware>[
+        Thunder.middleware,
+      ],
     );
-
-    Thunder.addDio(jsonPlaceholderDio);
 
     Map<String, Object?> body = <String, Object?>{
       "title": "foo",
@@ -75,53 +82,48 @@ class _MyHomePageState extends State<MyHomePage> {
       "isJson": true,
     };
 
-    widget.httpDio.get<void>("/redirect-to?url=https%3A%2F%2Fhttpbin.org");
-    widget.httpDio.delete<void>(
-      "/status/500",
-      queryParameters: {"dumb": "data", "Authorization": "Bearer "},
-      data: {"data": 0, "ok": true},
-      options: Options(headers: {"HEADER": "TEST"}),
+    widget.httpDio.get("/redirect-to?url=https%3A%2F%2Fhttpbin.org");
+    widget.httpDio.delete(
+      "/status/500?dumb=data&Authorization=Bearer ",
+      body: {"data": 0, "ok": true},
+      headers: {"HEADER": "TEST"},
     );
-    widget.httpDio.delete<void>("/status/400");
-    widget.httpDio.delete<void>("/status/300");
-    widget.httpDio.delete<void>("/status/200");
-    widget.httpDio.delete<void>("/status/100");
+    widget.httpDio.delete("/status/400");
+    widget.httpDio.delete("/status/300");
+    widget.httpDio.delete("/status/200");
+    widget.httpDio.delete("/status/100");
 
-    jsonPlaceholderDio.post<void>("/posts", data: body);
-    jsonPlaceholderDio.get<void>(
-      "/posts",
-      queryParameters: <String, Object?>{"test": 1},
+    jsonPlaceholderDio.post("/posts", body: body);
+    jsonPlaceholderDio.get(
+      "/posts?test=1",
     );
-    jsonPlaceholderDio.put<void>("/posts/1", data: body);
-    jsonPlaceholderDio.put<void>("/posts/1", data: body);
-    jsonPlaceholderDio.delete<void>("/posts/1");
-    jsonPlaceholderDio.get<void>("/test/test");
-    jsonPlaceholderDio.get<void>("/photos");
+    jsonPlaceholderDio.put("/posts/1", body: body);
+    jsonPlaceholderDio.put("/posts/1", body: body);
+    jsonPlaceholderDio.delete("/posts/1");
+    jsonPlaceholderDio.get("/test/test");
+    jsonPlaceholderDio.get("/photos");
 
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "https://icons.iconarchive.com/icons/paomedia/small-n-flat/256/sign-info-icon.png",
     );
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "https://images.unsplash.com/photo-1542736705-53f0131d1e98?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
     );
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "https://findicons.com/files/icons/1322/world_of_aqua_5/128/bluetooth.png",
     );
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "https://upload.wikimedia.org/wikipedia/commons/4/4e/Pleiades_large.jpg",
     );
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "http://techslides.com/demos/sample-videos/small.mp4",
     );
-    widget.mainDio.get<void>(
+    widget.mainDio.get(
       "https://www.cse.wustl.edu/~jain/cis677-97/ftp/e_3dlc2.pdf",
     );
-    widget.mainDio.get<void>(
-      "http://dummy.restapiexample.com/api/v1/employees",
-      queryParameters: <String, Object?>{"test": 1},
+    widget.mainDio.get(
+      "http://dummy.restapiexample.com/api/v1/employees?test=1",
     );
-
-    log(Thunder.getDiosHash);
   }
 
   @override

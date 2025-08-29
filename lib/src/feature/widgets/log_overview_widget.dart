@@ -19,16 +19,16 @@ class LogOverviewWidget extends StatelessWidget {
           ListRowItem(name: 'Method', value: log.request.method),
           ListRowItem(
             name: 'URL',
-            value: log.request.baseUrl.isEmpty
+            value: log.request.url.host.isEmpty
                 ? 'Base URL is empty'
-                : log.request.baseUrl,
+                : log.request.url.host,
             showCopyButton: true,
           ),
           ListRowItem(
             name: 'Endpoint',
-            value: log.request.path.isEmpty
+            value: log.request.url.path.isEmpty
                 ? 'Endpoint is empty'
-                : log.request.path,
+                : log.request.url.path,
             showCopyButton: true,
           ),
           ListRowItem(

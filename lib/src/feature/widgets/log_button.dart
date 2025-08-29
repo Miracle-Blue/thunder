@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../common/extension/curl_extension.dart';
 import '../../common/extension/duration_extension.dart';
+import '../../common/extension/middleware_extensions.dart';
 import '../../common/models/thunder_network_log.dart';
 import '../../common/utils/app_colors.dart';
 import '../../common/utils/helpers.dart';
@@ -42,11 +43,11 @@ class LogButton extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (log.request.baseUrl.isNotEmpty)
+                if (log.request.url.host.isNotEmpty)
                   Row(
                     children: [
                       /// For secure request
-                      if (log.request.baseUrl.contains('https')) ...[
+                      if (log.request.url.host.contains('https')) ...[
                         const Icon(
                           Icons.lock_outline_rounded,
                           size: 10,
@@ -58,7 +59,7 @@ class LogButton extends StatelessWidget {
                       /// Request Base URL
                       Expanded(
                         child: Text(
-                          log.request.baseUrl,
+                          log.request.url.host,
                           style: const TextStyle(
                             color: AppColors.grayRussian,
                             fontSize: 10,
@@ -77,7 +78,7 @@ class LogButton extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        log.request.path,
+                        log.request.url.path,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -146,8 +147,9 @@ class LogButton extends StatelessWidget {
                         ),
                       false => Text(
                           log.response?.statusCode.toString() ??
-                              log.error?.response?.statusCode.toString() ??
-                              'null',
+                              (log.error as ApiClientException)
+                                  .statusCode
+                                  .toString(),
                           style: TextStyle(
                             color: switch (log.response?.statusCode) {
                               _

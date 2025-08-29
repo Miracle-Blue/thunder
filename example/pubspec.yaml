@@ -10,7 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio: any
+
+  http: any
 
   thunder:
     path: ../

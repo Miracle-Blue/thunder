@@ -115,7 +115,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
             ),
             const SizedBox(height: 8),
             Image.network(
-              widget.log.request.uri.toString(),
+              widget.log.request.url.toString(),
               fit: BoxFit.fill,
               headers: _buildRequestHeaders(),
               loadingBuilder: (context, child, loadingProgress) {
@@ -136,7 +136,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
 
   /// Builds a view for very large text responses.
   List<Widget> _buildLargeBodyTextRows() {
-    final bodySize = widget.log.response?.data.toString().length ?? 0;
+    final bodySize = widget.log.response?.body.toString().length ?? 0;
     if (_showLargeBody) return _buildTextBodyRows();
 
     return [
@@ -158,7 +158,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
   /// Builds a view for text responses.
   List<Widget> _buildTextBodyRows() {
     final rows = <Widget>[];
-    final bodyContent = _formatBody(widget.log.response?.data);
+    final bodyContent = _formatBody(widget.log.response?.body);
 
     // Check for JSON-like content and try to parse it.
     if (bodyContent.contains('{') && bodyContent.contains('}')) {
@@ -179,11 +179,11 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
   List<Widget> _buildUnknownBodyRows() {
     final rows = <Widget>[];
     // Retrieve headers and content type from the response.
-    final headers = widget.log.response?.headers.map;
+    final headers = widget.log.response?.headers;
     final contentType = _getContentType(headers ?? {}) ?? '<unknown>';
 
     if (_showUnsupportedBody) {
-      final bodyContent = _formatBody(widget.log.response?.data);
+      final bodyContent = _formatBody(widget.log.response?.body);
       rows.add(ListRowItem(name: 'Body', value: bodyContent));
     } else {
       rows.addAll([
@@ -243,7 +243,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
   /// Returns the content type from the response headers.
   String? _getContentTypeOfResponse() {
     if (widget.log.response == null) return null;
-    return _getContentType(widget.log.response!.headers.map);
+    return _getContentType(widget.log.response!.headers);
   }
 
   /// Retrieves the content type header from a headers map.
@@ -260,7 +260,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
 
   /// Checks if the response body is considered large.
   bool _isLargeResponseBody() {
-    final data = widget.log.response?.data;
+    final data = widget.log.response?.body;
     return data != null && data.toString().length > _kLargeOutputSize;
   }
 

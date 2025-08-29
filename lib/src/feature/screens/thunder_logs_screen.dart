@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +8,7 @@ import '../widgets/log_button.dart';
 /// Screen that shows the logs of the network requests
 class ThunderLogsScreen extends StatefulWidget {
   /// Constructor for the [ThunderLogsScreen] class.
-  const ThunderLogsScreen({required this.dios, super.key});
-
-  /// The list of [Dio] instances
-  final List<Dio> dios;
+  const ThunderLogsScreen({super.key});
 
   @override
   State<ThunderLogsScreen> createState() => _ThunderLogsScreenState();

@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/extension/middleware_extensions.dart';
 import '../../common/utils/app_colors.dart';
 import '../controllers/thunder_logs_controller.dart';
 import '../controllers/thunder_overlay_controller.dart';
@@ -55,7 +55,6 @@ class Thunder extends StatefulWidget {
   /// Constructor for the [Thunder] class.
   const Thunder({
     required this.child,
-    this.dio = const <Dio>[],
     this.enabled = kDebugMode,
     this.duration = const Duration(milliseconds: 250),
     this.color,
@@ -67,12 +66,6 @@ class Thunder extends StatefulWidget {
   /// When false, the Thunder widget simply returns the child without any overlay functionality.
   /// Defaults to [kDebugMode] which means it's only enabled in debug builds.
   final bool enabled;
-
-  /// The list of [Dio] instances to monitor.
-  ///
-  /// These instances will have their network requests and responses logged
-  /// and displayed in the Thunder overlay panel.
-  final List<Dio> dio;
 
   /// The duration of the overlay animation.
   ///
@@ -101,7 +94,8 @@ class Thunder extends StatefulWidget {
   /// ```dart
   /// final dio = Thunder.addDio(Dio());
   /// ```
-  static Dio addDio(Dio dio) => ThunderLogsController.addDio(dio);
+  static ApiClientMiddleware get middleware =>
+      ThunderLogsController.getMiddleware();
 
   /// Utility to see the dio instances that are being monitored.
   ///
@@ -109,7 +103,7 @@ class Thunder extends StatefulWidget {
   /// ```dart
   /// log(Thunder.getDiosHash);
   /// ```
-  static String get getDiosHash => ThunderLogsController.getDiosHash;
+  // static String get getDiosHash => ThunderLogsController.getDiosHash;
 
   @override
   State<Thunder> createState() => _ThunderState();
@@ -139,9 +133,9 @@ class _ThunderState extends ThunderOverlayController {
                   child: ScaffoldMessenger(
                     child: HeroControllerScope.none(
                       child: Navigator(
-                        pages: <Page<void>>[
+                        pages: const <Page<void>>[
                           MaterialPage<void>(
-                            child: ThunderLogsScreen(dios: widget.dio),
+                            child: ThunderLogsScreen(),
                           ),
                         ],
                         onDidRemovePage: (page) => log('ON DID REMOVE PAGE'),
