@@ -48,14 +48,10 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Show the sort by alert dialog and update the sort type.
   static Future<void> onSortLogsTap() async {
-    if (ThunderLogsController.inLogDetailScreen) {
-      return;
-    }
+    if (ThunderLogsController.inLogDetailScreen) return;
 
     final context = _instance?.context;
-    if (context == null) {
-      return;
-    }
+    if (context == null) return;
 
     // Check if dialog is already open, if so, return early
     if (_isDialogOpen) {
@@ -67,28 +63,23 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     try {
       final result = await showSortByAlertDialog(context, sortType: sortType);
 
-      if (result != null) {
-        sortType = result;
-      }
+      if (result != null) sortType = result;
 
-      _instance?.setState(
-        () => switch (result) {
-          SortType.createTime => networkLogs.sort(
-              (a, b) =>
-                  a.sendTime?.compareTo(b.sendTime ?? DateTime.now()) ?? 0,
-            ),
-          SortType.responseTime => networkLogs.sort(
-              (a, b) => a.duration?.compareTo(b.duration ?? Duration.zero) ?? 0,
-            ),
-          SortType.endpoint => networkLogs.sort(
-              (a, b) => a.request.url.path.compareTo(b.request.url.path),
-            ),
-          SortType.responseSize => networkLogs.sort(
-              (a, b) => a.receiveBytes?.compareTo(b.receiveBytes ?? 0) ?? 0,
-            ),
-          _ => null,
-        },
-      );
+      final sortFunction = switch (result) {
+        SortType.createTime => (ThunderNetworkLog a, ThunderNetworkLog b) =>
+            a.sendTime?.compareTo(b.sendTime ?? DateTime.now()) ?? 0,
+        SortType.responseTime => (ThunderNetworkLog a, ThunderNetworkLog b) =>
+            a.duration?.compareTo(b.duration ?? Duration.zero) ?? 0,
+        SortType.endpoint => (ThunderNetworkLog a, ThunderNetworkLog b) =>
+            a.request.url.path.compareTo(b.request.url.path),
+        SortType.responseSize => (ThunderNetworkLog a, ThunderNetworkLog b) =>
+            a.receiveBytes?.compareTo(b.receiveBytes ?? 0) ?? 0,
+        _ => null,
+      };
+
+      if (sortFunction != null) networkLogs.sort(sortFunction);
+
+      _instance?.setState(() {});
     } finally {
       _isDialogOpen = false;
     }
@@ -96,9 +87,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Method to delete all network logs.
   static void onDeleteAllLogsTap() {
-    if (ThunderLogsController.inLogDetailScreen) {
-      return;
-    }
+    if (ThunderLogsController.inLogDetailScreen) return;
 
     if (_isDialogOpen && _instance != null) {
       Navigator.of(_instance!.context).pop<void>();
@@ -109,38 +98,22 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Static method to toggle the search.
   static void toggleSearch() {
-    if (ThunderLogsController.inLogDetailScreen) {
-      return;
-    }
+    if (ThunderLogsController.inLogDetailScreen) return;
 
     if (_isDialogOpen && _instance != null) {
       Navigator.of(_instance!.context).pop<void>();
     }
 
-    _instance?.setState(() => searchEnabled = !searchEnabled);
+    _instance?.setState(() {
+      searchEnabled = !searchEnabled;
+
+      if (!searchEnabled && _instance?._tempNetworkLogs != null) {
+        networkLogs =
+            List<ThunderNetworkLog>.from(_instance!._tempNetworkLogs!);
+        _instance?._tempNetworkLogs = null;
+      }
+    });
   }
-
-  // void _onNetworkActivity(ThunderNetworkLog log) => setState(() {
-  //       final index = networkLogs.indexWhere(
-  //         (existingLog) => existingLog.id == log.id,
-  //       );
-
-  //       if (index >= 0) {
-  //         networkLogs[index] = log;
-  //       } else {
-  //         networkLogs.add(log);
-  //       }
-  //     });
-
-  // bool _listEquals<T>(List<T> a, List<T> b) {
-  //   if (a.length != b.length) return false;
-
-  //   for (var i = 0; i < a.length; i++) {
-  //     if (a[i] != b[i]) return false;
-  //   }
-
-  //   return true;
-  // }
 
   /// Method to search logs by their endpoint or base url
   void onSearchChanged(String query) => setState(() {
@@ -188,15 +161,6 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     _instance = this;
   }
 
-  // @override
-  // void didUpdateWidget(covariant ThunderLogsScreen oldWidget) {
-  //   // Check for changes in the Dio instances
-  //   if (!_listEquals<Dio>(widget.dios, oldWidget.dios)) {
-  //     _setupInterceptors();
-  //   }
-  //   super.didUpdateWidget(oldWidget);
-  // }
-
   @override
   void dispose() {
     // Remove all interceptors
@@ -212,5 +176,3 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /* endregion lifecycle */
 }
-
-// void _log(String message) => log(name: 'Thunder', message);

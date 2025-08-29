@@ -1,27 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
+import '../extension/middleware_extensions.dart';
+import '../models/thunder_network_log.dart';
+
 /// Class that helps with various helper methods
 abstract class Helpers {
   const Helpers._();
 
-  static const int _kilobyteAsByte = 1000;
-  static const int _megabyteAsByte = 1000000;
+  static const int _kilobyteAsByte = 1_000;
+  static const int _megabyteAsByte = 1_000_000;
 
   /// Method that formats the bytes to a human readable format
-  static String formatBytes(int? bytes) {
-    if (bytes == null || bytes < 0) return '0B';
-
-    if (bytes <= _kilobyteAsByte) return '${bytes}B';
-
-    if (bytes <= _megabyteAsByte) {
-      return '${_formatDouble(bytes / _kilobyteAsByte)}kB';
-    }
-
-    return '${_formatDouble(bytes / _megabyteAsByte)}MB';
-  }
-
-  static String _formatDouble(double value) => value.toStringAsFixed(2);
+  static String formatBytes(int? bytes) => switch (bytes) {
+        null || < 0 => '0B',
+        <= _kilobyteAsByte => '${bytes}B',
+        <= _megabyteAsByte => '${_formatDouble(bytes / _kilobyteAsByte)}kB',
+        _ => '${_formatDouble(bytes / _megabyteAsByte)}MB',
+      };
 
   /// Method that shows a snack bar in iOS style
   static void showSnackBar(
@@ -62,4 +58,15 @@ abstract class Helpers {
 
     showSnackBar(context);
   }
+
+  /// get StatusCode from the log
+  static String getStatusCode(ThunderNetworkLog log) =>
+      switch (log.response?.statusCode) {
+        int statusCode => statusCode.toString(),
+        _ when log.error != null && log.error is ApiClientException =>
+          (log.error as ApiClientException).statusCode.toString(),
+        _ => 'null',
+      };
 }
+
+String _formatDouble(double value) => value.toStringAsFixed(2);

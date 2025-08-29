@@ -17,6 +17,7 @@ final class ThunderNetworkLog {
     this.response,
     this.error,
     this.duration,
+    this.statusCode,
     String? id,
   }) : id = id ?? DateTime.now().microsecondsSinceEpoch.toString();
 
@@ -50,6 +51,9 @@ final class ThunderNetworkLog {
   /// UUID of the log
   final String id;
 
+  /// The status code
+  final int? statusCode;
+
   /// Method to get the color of the method
   Color get methodColor => request.method.methodColor;
 
@@ -62,11 +66,12 @@ final class ThunderNetworkLog {
     DateTime? receiveTime,
     ApiClientRequest? request,
     ApiClientResponse? response,
-    Object? error,
+    ApiClientException? error,
     Duration? duration,
     int? sendBytes,
     int? receiveBytes,
     bool? isLoading,
+    int? statusCode,
   }) =>
       ThunderNetworkLog(
         sendTime: sendTime ?? this.sendTime,
@@ -79,6 +84,7 @@ final class ThunderNetworkLog {
         sendBytes: sendBytes ?? this.sendBytes,
         receiveBytes: receiveBytes ?? this.receiveBytes,
         id: id,
+        statusCode: statusCode ?? this.statusCode,
       );
 
   @override
@@ -95,7 +101,8 @@ final class ThunderNetworkLog {
         other.duration == duration &&
         other.isLoading == isLoading &&
         other.sendBytes == sendBytes &&
-        other.receiveBytes == receiveBytes;
+        other.receiveBytes == receiveBytes &&
+        other.statusCode == statusCode;
   }
 
   @override
@@ -109,9 +116,10 @@ final class ThunderNetworkLog {
       duration.hashCode ^
       isLoading.hashCode ^
       sendBytes.hashCode ^
-      receiveBytes.hashCode;
+      receiveBytes.hashCode ^
+      statusCode.hashCode;
 
   @override
   String toString() =>
-      'ThunderNetworkLog(timestamp: $sendTime, request: $request, response: $response, error: $error, duration: $duration, isLoading: $isLoading, id: $id, sendBytes: $sendBytes, receiveBytes: $receiveBytes)';
+      'ThunderNetworkLog(timestamp: $sendTime, request: $request, response: $response, error: $error, duration: $duration, isLoading: $isLoading, id: $id, sendBytes: $sendBytes, receiveBytes: $receiveBytes, statusCode: $statusCode)';
 }

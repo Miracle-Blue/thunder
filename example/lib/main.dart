@@ -137,26 +137,28 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Press the button in the bottom to run the requests',
-                style: TextStyle(
-                  color: Color(0xFF3b4151),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Press the button in the bottom to run the requests',
+                  style: TextStyle(
+                    color: Color(0xFF3b4151),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 12),
-              FilledButton(
-                onPressed: _runDioRequests,
-                style: FilledButton.styleFrom(backgroundColor: _greenDark),
-                child: const Text('Run requests'),
-              ),
-            ],
+                SizedBox(height: 12),
+                FilledButton(
+                  onPressed: _runDioRequests,
+                  style: FilledButton.styleFrom(backgroundColor: _greenDark),
+                  child: const Text('Run requests'),
+                ),
+              ],
+            ),
           ),
         ),
       );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' show Request;
 import 'package:intl/intl.dart';
 
 import '../../common/extension/object_extension.dart';
@@ -36,13 +35,13 @@ class LogRequestWidget extends StatelessWidget {
           ),
           ListRowItem(
             name: 'Body',
-            value: ((log.request as Request).body as Object?).prettyJson,
+            value: log.request.body.prettyJsonEncodedBody,
             showCopyButton: true,
             isJson: true,
           ),
           ListRowItem(
             name: 'Query Parameters',
-            value: (log.request.url.queryParameters as Object?).prettyJson,
+            value: log.request.url.queryParameters.prettyJson,
             showCopyButton: true,
             showDivider: false,
             isJson: true,

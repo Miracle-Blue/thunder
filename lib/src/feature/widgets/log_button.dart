@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../../common/extension/curl_extension.dart';
 import '../../common/extension/duration_extension.dart';
-import '../../common/extension/middleware_extensions.dart';
 import '../../common/models/thunder_network_log.dart';
 import '../../common/utils/app_colors.dart';
 import '../../common/utils/helpers.dart';
@@ -146,20 +145,14 @@ class LogButton extends StatelessWidget {
                           ),
                         ),
                       false => Text(
-                          log.response?.statusCode.toString() ??
-                              (log.error as ApiClientException)
-                                  .statusCode
-                                  .toString(),
+                          Helpers.getStatusCode(log),
                           style: TextStyle(
                             color: switch (log.response?.statusCode) {
-                              _
-                                  when 200 <= (log.response?.statusCode ?? 0) &&
-                                      (log.response?.statusCode ?? 0) < 300 =>
+                              int i when i >= 200 && i < 300 =>
                                 const Color(0xFF2ccc84),
                               _ => AppColors.red,
                             },
                             fontWeight: FontWeight.w700,
-                            // fontSize: 15,
                           ),
                         ),
                     },

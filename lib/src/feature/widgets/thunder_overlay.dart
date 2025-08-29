@@ -13,43 +13,25 @@ import '../screens/thunder_logs_screen.dart';
 /// A debug overlay widget that displays network logs and provides debugging tools.
 ///
 /// The Thunder widget creates a slide-out panel that shows network requests and responses
-/// from provided Dio instances. This is particularly useful during development to monitor
+/// from provided ApiClient instances. This is particularly useful during development to monitor
 /// API interactions, debug network issues, and analyze app behavior.
 ///
 /// Features:
-/// - Displays network requests and responses from Dio instances
+/// - Displays network requests and responses from ApiClient instances
 /// - Provides filtering and search capabilities for logs
 /// - Allows clearing of logs
 /// - Can be easily toggled with a handle on the side of the screen
 /// - Only active in debug mode by default
 /// ------------------------------------------------------------------------------------------------
 /// - [enabled]: Whether to enable the overlay (defaults to kDebugMode)
-/// - [dio]: List of Dio instances to monitor for network activity
 /// - [duration]: Animation duration for showing/hiding the overlay
 /// - [child]: The main application widget that Thunder will wrap
 ///
-/// Example:
-/// ```dart
-/// class MyApp extends StatelessWidget {
-///   const MyApp({super.key});
-///
-///   @override
-///   Widget build(BuildContext context) => MaterialApp(
-///     title: 'Flutter Demo',
-///     home: const MyHomePage(title: 'Flutter Demo Home Page'),
-///     builder:  (context, child) => Thunder(
-///       dio: [_httpDio, _mainDio],
-///       child: child ?? SizedBox.shrink(),
-///     ),
-///   );
-/// }
-/// ```
-///
-/// You can also use Thunder without initializing the widget by directly adding the interceptor to a Dio instance:
+/// You can use Thunder without initializing the widget by directly adding the middleware to a ApiClient instance:
 ///
 /// ```dart
 /// // This will work even before a Thunder widget is created
-/// final dio = Dio()..interceptors.add(Thunder.getInterceptor);
+/// final client = ApiClient(middleware: Thunder.middleware);
 /// ```
 class Thunder extends StatefulWidget {
   /// Constructor for the [Thunder] class.
@@ -82,28 +64,14 @@ class Thunder extends StatefulWidget {
   /// This is typically the root of your application that Thunder will wrap.
   final Widget child;
 
-  /// Adds a Dio instance to be tracked by Thunder
+  /// Add this middleware to your ApiClient instances.
   ///
   /// Example:
   /// ```dart
-  /// Thunder.addDio(dio);
-  /// ```
-  ///
-  /// Optionally, you can use the returned [Dio] instance
-  /// Example:
-  /// ```dart
-  /// final dio = Thunder.addDio(Dio());
+  /// Thunder.middleware;
   /// ```
   static ApiClientMiddleware get middleware =>
       ThunderLogsController.getMiddleware();
-
-  /// Utility to see the dio instances that are being monitored.
-  ///
-  /// Example:
-  /// ```dart
-  /// log(Thunder.getDiosHash);
-  /// ```
-  // static String get getDiosHash => ThunderLogsController.getDiosHash;
 
   @override
   State<Thunder> createState() => _ThunderState();

@@ -33,7 +33,7 @@ class LogOverviewWidget extends StatelessWidget {
           ),
           ListRowItem(
             name: 'Status',
-            value: log.response?.statusCode.toString() ?? 'null',
+            value: Helpers.getStatusCode(log),
           ),
           ListRowItem(
             name: 'Time',

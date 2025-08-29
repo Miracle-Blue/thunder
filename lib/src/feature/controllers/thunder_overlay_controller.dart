@@ -17,44 +17,6 @@ abstract class ThunderOverlayController extends State<Thunder>
   /// Whether the overlay is dismissed
   bool dismissed = true;
 
-  @override
-  void initState() {
-    super.initState();
-
-    AppColors.mainColor = widget.color ?? AppColors.mainColor;
-
-    controller = ThunderToolsController(
-      value: 0,
-      duration: widget.duration,
-      vsync: this,
-    );
-    controller.addStatusListener(_onStatusChanged);
-    _onStatusChanged(controller.status);
-  }
-
-  @override
-  void didUpdateWidget(covariant Thunder oldWidget) {
-    if (widget.enabled) {
-      dismissed = controller.status == AnimationStatus.dismissed;
-    } else {
-      dismissed = true;
-    }
-    if (widget.duration != oldWidget.duration) {
-      controller.duration = widget.duration;
-    }
-
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    controller
-      ..removeStatusListener(_onStatusChanged)
-      ..dispose();
-
-    super.dispose();
-  }
-
   void _onStatusChanged(AnimationStatus status) => switch (status) {
         _ when !mounted => null,
         AnimationStatus.dismissed => () {
@@ -108,4 +70,44 @@ abstract class ThunderOverlayController extends State<Thunder>
       controller.hide();
     }
   }
+
+  /* region lifecycle */
+  @override
+  void initState() {
+    super.initState();
+
+    AppColors.mainColor = widget.color ?? AppColors.mainColor;
+
+    controller = ThunderToolsController(
+      value: 0,
+      duration: widget.duration,
+      vsync: this,
+    );
+    controller.addStatusListener(_onStatusChanged);
+    _onStatusChanged(controller.status);
+  }
+
+  @override
+  void didUpdateWidget(covariant Thunder oldWidget) {
+    if (widget.enabled) {
+      dismissed = controller.status == AnimationStatus.dismissed;
+    } else {
+      dismissed = true;
+    }
+    if (widget.duration != oldWidget.duration) {
+      controller.duration = widget.duration;
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    controller
+      ..removeStatusListener(_onStatusChanged)
+      ..dispose();
+
+    super.dispose();
+  }
+  /* endregion lifecycle */
 }

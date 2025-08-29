@@ -22,6 +22,8 @@ class LogResponseWidget extends StatefulWidget {
 }
 
 class _LogResponseWidgetState extends State<LogResponseWidget> {
+  final ScrollController _controller = ScrollController();
+
   bool _showJsonResponse = true;
   late Future<String> _jsonResponse;
   String get _contentType =>
@@ -51,11 +53,18 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => switch (widget.log.isLoading) {
         true => const AwaitingResponseWidget(),
         false => Scrollbar(
-            controller: PrimaryScrollController.of(context),
+            controller: _controller,
             child: ListView(
+              controller: _controller,
               children: [
                 ListRowItem(
                   name: 'Received',
@@ -69,7 +78,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                 ),
                 ListRowItem(
                   name: 'Status',
-                  value: widget.log.response?.statusCode.toString(),
+                  value: Helpers.getStatusCode(widget.log),
                 ),
                 ListRowItem(name: 'Content-Type', value: _contentType),
 
@@ -156,13 +165,11 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                   ),
 
                   /// When error data is html, we need to show the error data as html.
-                  if ((widget.log.error as ApiClientException)
-                          .data
-                          ?.toString()
-                          .contains(
-                            '!DOCTYPE html',
-                          ) ??
-                      false)
+                  if (switch (widget.log.error) {
+                    ApiClientException(:final data) =>
+                      data.toString().contains('!DOCTYPE html'),
+                    final e => e.toString().contains('!DOCTYPE html'),
+                  })
                     const Padding(
                       padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
                       child: Text(
@@ -174,17 +181,19 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                   else
                     ListRowItem(
                       name: 'Error data',
-                      value: (widget.log.error as ApiClientException)
-                          .data
-                          .prettyJson,
+                      value: switch (widget.log.error) {
+                        ApiClientException(:final data) => data.prettyJson,
+                        _ => widget.log.error.toString(),
+                      },
                       isJson: true,
                     ),
 
                   ListRowItem(
                     name: 'Error message',
-                    value: (widget.log.error as ApiClientException)
-                        .message
-                        .toString(),
+                    value: switch (widget.log.error) {
+                      ApiClientException(:final message) => message.toString(),
+                      _ => widget.log.error.toString(),
+                    },
                     isJson: true,
                   ),
                   ListRowItem(

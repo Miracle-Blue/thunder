@@ -10,6 +10,13 @@ abstract class ThunderLogDetailController extends State<ThunderLogDetailScreen>
   /// The tab controller for the [ThunderLogDetailScreen]
   late final TabController tabController;
 
+  /// Method that handles the copy log tap
+  void onCopyLogTap() => Helpers.copyAndShowSnackBar(
+        context,
+        contentToCopy: CopyLogData(log: widget.log).toCopyableLogData,
+      );
+
+  /* region lifecycle */
   @override
   void initState() {
     super.initState();
@@ -21,10 +28,5 @@ abstract class ThunderLogDetailController extends State<ThunderLogDetailScreen>
     tabController.dispose();
     super.dispose();
   }
-
-  /// Method that handles the copy log tap
-  void onCopyLogTap() => Helpers.copyAndShowSnackBar(
-        context,
-        contentToCopy: CopyLogData(log: widget.log).toCopyableLogData,
-      );
+  /* endregion lifecycle */
 }

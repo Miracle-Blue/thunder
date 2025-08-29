@@ -1,5 +1,3 @@
-import 'package:http/http.dart' show Request;
-
 import '../extension/duration_extension.dart';
 import '../extension/middleware_extensions.dart';
 import '../extension/object_extension.dart';
@@ -84,16 +82,17 @@ class CopyLogData {
         false => '\r',
       };
 
-  String get _requestBody => switch ((log.request as Request).body.isNotEmpty) {
-        true =>
-          'Request body: ```json\n${(log.request as Request).body.prettyJson}```\n',
+  String get _requestBody => switch (log.request.body.isNotEmpty) {
+        true => 'Request body: ```json\n${log.request.body.prettyJson}```\n',
         false => '\r',
       };
 
-  String get _responseBody => switch (log.response?.body != null) {
-        true =>
-          'Response body: ```json\n${(log.response?.body).prettyJson}```\n',
-        false => '\r',
+  String get _responseBody => switch (log.response?.body) {
+        Map<String, Object?> body =>
+          'Response body: ```json\n${body.prettyJson}```\n',
+        _ when log.error != null && log.error is ApiClientException =>
+          'Error body: ```json\n${(log.error as ApiClientException).data?.prettyJson}```\n',
+        _ => '\r',
       };
 
   /// Method that converts the [ThunderNetworkLog] to a copyable log data string

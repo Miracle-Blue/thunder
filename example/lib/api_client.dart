@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -160,7 +161,7 @@ ApiClientHandler _createHandler(
         // Send a base request.
         final http_package.StreamedResponse streamedResponse;
         try {
-          streamedResponse = await internalClient.send(request.r);
+          streamedResponse = await internalClient.send(request);
         } on Object catch (error, stackTrace) {
           throwError(
             completer,
@@ -225,28 +226,36 @@ ApiClientHandler _createHandler(
         int contentLength;
         Uint8List bytes;
         try {
-          contentLength = streamedResponse.contentLength ?? 0;
-          if (contentLength > 0) {
-            final contentType =
-                streamedResponse.headers['content-type']?.toLowerCase() ?? '';
-            if (!contentType.contains('application/json')) {
-              throwError(
-                completer,
-                ApiClientException$Client(
-                  code: 'invalid_content_type_error',
-                  message: 'Response content type is not application/json.',
-                  statusCode: statusCode,
-                  error: null,
-                  data: null,
-                ),
-                StackTrace.current,
-              );
-              return;
-            }
-            bytes = await streamedResponse.stream.toBytes();
-          } else {
-            bytes = Uint8List(0);
+          // contentLength = streamedResponse.contentLength ?? 0;
+          // if (contentLength > 0) {
+
+          final contentType =
+              streamedResponse.headers['content-type']?.toLowerCase() ?? '';
+          if (!contentType.contains('application/json')) {
+            throwError(
+              completer,
+              ApiClientException$Client(
+                code: 'invalid_content_type_error',
+                message: 'Response content type is not application/json.',
+                statusCode: statusCode,
+                error: null,
+                data: null,
+              ),
+              StackTrace.current,
+            );
+            return;
           }
+          bytes = await streamedResponse.stream.toBytes();
+          contentLength = bytes.length;
+
+          log('content-type: ${streamedResponse.headers['content-type']}');
+          log('content-length: ${streamedResponse.headers['content-length']}');
+          log('bytes: ${bytes.length}');
+          log('contentLength: ${streamedResponse.contentLength}');
+
+          // } else {
+          //   bytes = Uint8List(0);
+          // }
         } on Object catch (error, stackTrace) {
           throwError(
             completer,

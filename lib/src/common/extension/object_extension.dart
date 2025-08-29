@@ -29,6 +29,15 @@ extension ObjectExtension on Object? {
   /// final json = object.prettyJson;
   /// ```
   String get prettyJson => const JsonEncoder.withIndent('  ').convert(this);
+
+  /// Convert the encoded body to a pretty JSON string synchronously.
+  ///
+  /// Example:
+  /// ```dart
+  /// final json = object.prettyJsonEncodedBody;
+  /// ```
+  String get prettyJsonEncodedBody =>
+      const JsonEncoder.withIndent('  ').convert(jsonDecode(toString()));
 }
 
 void _prettyJsonIsolate(List<Object?> args) {

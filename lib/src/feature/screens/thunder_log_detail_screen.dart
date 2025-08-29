@@ -59,15 +59,16 @@ class _ThunderLogDetailScreenState extends ThunderLogDetailController {
           ),
           child: Stack(
             children: [
-              TabBarView(
-                controller: tabController,
-                // physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  LogOverviewWidget(log: widget.log),
-                  LogRequestWidget(log: widget.log),
-                  LogResponseWidget(log: widget.log),
-                  LogPreviewWidget(log: widget.log),
-                ],
+              Positioned.fill(
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    LogOverviewWidget(log: widget.log),
+                    LogRequestWidget(log: widget.log),
+                    LogResponseWidget(log: widget.log),
+                    LogPreviewWidget(log: widget.log),
+                  ],
+                ),
               ),
               Align(
                 alignment: Alignment.bottomRight,

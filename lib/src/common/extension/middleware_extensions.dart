@@ -1,3 +1,5 @@
+import 'dart:typed_data' show Uint8List;
+
 import 'package:http/http.dart' as http_package;
 import 'package:meta/meta.dart';
 
@@ -53,8 +55,14 @@ extension type ApiClientMiddlewareWrapper._(ApiClientMiddleware _fn) {
 }
 
 /// An HTTP request with a JSON-encoded body.
-extension type ApiClientRequest(http_package.BaseRequest r)
-    implements http_package.BaseRequest {}
+extension type ApiClientRequest(http_package.BaseRequest _request)
+    implements http_package.BaseRequest {
+  /// The body of the request.
+  String get body => (_request as http_package.Request).body;
+
+  /// The body bytes of the request.
+  Uint8List get bodyBytes => (_request as http_package.Request).bodyBytes;
+}
 
 /// An HTTP response with a JSON-encoded body.
 final class ApiClientResponse {
