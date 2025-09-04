@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:meta/meta.dart';
 
@@ -69,8 +68,6 @@ class ThunderMiddleware {
           ));
 
           rethrow;
-        } finally {
-          log('--=-=-=-==--==-=--==-=--==----==-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=');
-        }
+        } finally {}
       };
 }
