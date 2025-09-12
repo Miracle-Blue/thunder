@@ -77,7 +77,7 @@ class LogButton extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        log.request.url.pathSegments.join('/'),
+                        log.request.url.path,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

@@ -100,7 +100,7 @@ class CopyLogData {
     final buffer = StringBuffer()
       ..writeln('Server: ${log.request.url.host}')
       ..writeln('Method: ${log.request.method}')
-      ..writeln('Endpoint: ${log.request.url.pathSegments.join('/')}')
+      ..writeln('Endpoint: ${log.request.url.path}')
       ..writeln(
         'Status: ${log.response?.statusCode ?? (log.error as ApiClientException).statusCode}',
       );
