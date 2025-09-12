@@ -26,9 +26,9 @@ class LogOverviewWidget extends StatelessWidget {
           ),
           ListRowItem(
             name: 'Endpoint',
-            value: log.request.url.path.isEmpty
+            value: log.request.url.pathSegments.isEmpty
                 ? 'Endpoint is empty'
-                : log.request.url.path,
+                : log.request.url.pathSegments.join('/'),
             showCopyButton: true,
           ),
           ListRowItem(
