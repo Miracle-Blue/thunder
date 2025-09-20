@@ -15,8 +15,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   static ThunderMiddleware? _middlewareInstance;
 
   /// The list of network logs.
-  static ValueNotifier<List<ThunderNetworkLog>> networkLogs =
-      ValueNotifier(<ThunderNetworkLog>[]);
+  static List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
 
   /// Whether the search is enabled.
   static bool searchEnabled = false;
@@ -34,19 +33,18 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Adds a Dio instance to be tracked by Thunder
   static ThunderMiddleware getMiddleware() =>
-      _middlewareInstance ??= ThunderMiddleware(onNetworkActivity: (log) {
-        final index = networkLogs.value.indexWhere(
-          (existingLog) => existingLog.id == log.id,
-        );
+      _middlewareInstance ??= ThunderMiddleware(
+          onNetworkActivity: (log) => _instance?.setState(() {
+                final index = networkLogs.indexWhere(
+                  (existingLog) => existingLog.id == log.id,
+                );
 
-        if (index >= 0) {
-          final newNetworkLogs = networkLogs.value;
-          newNetworkLogs[index] = log;
-          networkLogs.value = newNetworkLogs.toList();
-        } else {
-          networkLogs.value = [...networkLogs.value, log];
-        }
-      });
+                if (index >= 0) {
+                  networkLogs[index] = log;
+                } else {
+                  networkLogs.add(log);
+                }
+              }));
 
   /// Show the sort by alert dialog and update the sort type.
   static Future<void> onSortLogsTap() async {
@@ -79,7 +77,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
         _ => null,
       };
 
-      if (sortFunction != null) networkLogs.value.sort(sortFunction);
+      if (sortFunction != null) networkLogs.sort(sortFunction);
 
       _instance?.setState(() {});
     } finally {
@@ -95,7 +93,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       Navigator.of(_instance!.context).pop<void>();
     }
 
-    _instance?.setState(networkLogs.value.clear);
+    _instance?.setState(networkLogs.clear);
   }
 
   /// Static method to toggle the search.
@@ -110,7 +108,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       searchEnabled = !searchEnabled;
 
       if (!searchEnabled && _instance?._tempNetworkLogs != null) {
-        networkLogs.value =
+        networkLogs =
             List<ThunderNetworkLog>.from(_instance!._tempNetworkLogs!);
         _instance?._tempNetworkLogs = null;
       }
@@ -121,13 +119,13 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   void onSearchChanged(String query) => setState(() {
         if (query.isEmpty) {
           if (_tempNetworkLogs != null) {
-            networkLogs.value = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
+            networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
             _tempNetworkLogs = null;
           }
         } else {
-          _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs.value);
+          _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
 
-          networkLogs.value = _tempNetworkLogs
+          networkLogs = _tempNetworkLogs
                   ?.where(
                     (log) =>
                         log.request.url.path.toLowerCase().contains(
