@@ -33,18 +33,22 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Adds a Dio instance to be tracked by Thunder
   static ThunderMiddleware getMiddleware() =>
-      _middlewareInstance ??= ThunderMiddleware(
-          onNetworkActivity: (log) => _instance?.setState(() {
-                final index = networkLogs.indexWhere(
-                  (existingLog) => existingLog.id == log.id,
-                );
+      _middlewareInstance ??= ThunderMiddleware(onNetworkActivity: (log) {
+        if (_instance?.mounted ?? false) {
+          
+          _instance?.setState(() {
+            final index = networkLogs.indexWhere(
+              (existingLog) => existingLog.id == log.id,
+            );
 
-                if (index >= 0) {
-                  networkLogs[index] = log;
-                } else {
-                  networkLogs.add(log);
-                }
-              }));
+            if (index >= 0) {
+              networkLogs[index] = log;
+            } else {
+              networkLogs.add(log);
+            }
+          });
+        }
+      });
 
   /// Show the sort by alert dialog and update the sort type.
   static Future<void> onSortLogsTap() async {
