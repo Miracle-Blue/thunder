@@ -48,35 +48,37 @@ class _ThunderLogsScreenState extends ThunderLogsController {
                 ),
             },
           ),
-          child: Stack(
-            children: [
-              switch (ThunderLogsController.networkLogs.isEmpty) {
-                true => const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.cloud_off,
-                            size: 48, color: AppColors.grayRussian),
-                        Text(
-                          'No logs here yet',
-                          style: TextStyle(
-                            color: AppColors.grayRussian,
-                            fontWeight: FontWeight.w600,
+          child: ValueListenableBuilder(
+            valueListenable: ThunderLogsController.networkLogs,
+            builder: (context, value, child) => Stack(
+              children: [
+                switch (value.isEmpty) {
+                  true => const Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.cloud_off,
+                              size: 48, color: AppColors.grayRussian),
+                          Text(
+                            'No logs here yet',
+                            style: TextStyle(
+                              color: AppColors.grayRussian,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                false => ListView.builder(
-                    itemCount: ThunderLogsController.networkLogs.length,
-                    itemBuilder: (context, index) => LogButton(
-                      log: ThunderLogsController.networkLogs[
-                          ThunderLogsController.networkLogs.length - 1 - index],
-                      onLogTap: onLogTap,
+                  false => ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) => LogButton(
+                        log: value[value.length - 1 - index],
+                        onLogTap: onLogTap,
+                      ),
                     ),
-                  ),
-              },
-            ],
+                },
+              ],
+            ),
           ),
         ),
       );

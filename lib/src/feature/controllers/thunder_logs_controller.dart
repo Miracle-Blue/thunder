@@ -15,7 +15,8 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   static ThunderMiddleware? _middlewareInstance;
 
   /// The list of network logs.
-  static List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
+  static ValueNotifier<List<ThunderNetworkLog>> networkLogs =
+      ValueNotifier(<ThunderNetworkLog>[]);
 
   /// Whether the search is enabled.
   static bool searchEnabled = false;
@@ -34,19 +35,16 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   /// Adds a Dio instance to be tracked by Thunder
   static ThunderMiddleware getMiddleware() =>
       _middlewareInstance ??= ThunderMiddleware(onNetworkActivity: (log) {
-        if (_instance?.mounted ?? false) {
-          
-          _instance?.setState(() {
-            final index = networkLogs.indexWhere(
-              (existingLog) => existingLog.id == log.id,
-            );
+        final index = networkLogs.value.indexWhere(
+          (existingLog) => existingLog.id == log.id,
+        );
 
-            if (index >= 0) {
-              networkLogs[index] = log;
-            } else {
-              networkLogs.add(log);
-            }
-          });
+        if (index >= 0) {
+          final newNetworkLogs = networkLogs.value;
+          newNetworkLogs[index] = log;
+          networkLogs.value = newNetworkLogs.toList();
+        } else {
+          networkLogs.value = [...networkLogs.value, log];
         }
       });
 
@@ -81,7 +79,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
         _ => null,
       };
 
-      if (sortFunction != null) networkLogs.sort(sortFunction);
+      if (sortFunction != null) networkLogs.value.sort(sortFunction);
 
       _instance?.setState(() {});
     } finally {
@@ -97,7 +95,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       Navigator.of(_instance!.context).pop<void>();
     }
 
-    _instance?.setState(networkLogs.clear);
+    _instance?.setState(networkLogs.value.clear);
   }
 
   /// Static method to toggle the search.
@@ -112,7 +110,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       searchEnabled = !searchEnabled;
 
       if (!searchEnabled && _instance?._tempNetworkLogs != null) {
-        networkLogs =
+        networkLogs.value =
             List<ThunderNetworkLog>.from(_instance!._tempNetworkLogs!);
         _instance?._tempNetworkLogs = null;
       }
@@ -123,13 +121,13 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   void onSearchChanged(String query) => setState(() {
         if (query.isEmpty) {
           if (_tempNetworkLogs != null) {
-            networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
+            networkLogs.value = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
             _tempNetworkLogs = null;
           }
         } else {
-          _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
+          _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs.value);
 
-          networkLogs = _tempNetworkLogs
+          networkLogs.value = _tempNetworkLogs
                   ?.where(
                     (log) =>
                         log.request.url.path.toLowerCase().contains(
