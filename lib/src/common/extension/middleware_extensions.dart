@@ -66,11 +66,15 @@ extension type ApiClientRequest(http_package.BaseRequest _request)
       };
 
   /// The body bytes of the request.
-  Future<Uint8List> get bodyBytes async => switch (_request) {
+  Uint8List get bodyBytes => switch (_request) {
         http_package.Request request => request.bodyBytes,
-        http_package.MultipartRequest request =>
-          await request.finalize().toBytes(),
         _ => Uint8List(0),
+      };
+
+  /// The file bytes of the request.
+  int get fileBytes => switch (_request) {
+        http_package.MultipartRequest request => request.contentLength,
+        _ => 0,
       };
 }
 

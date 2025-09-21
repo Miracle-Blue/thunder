@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http_package;
 import 'package:meta/meta.dart';
 
 import '../extension/middleware_extensions.dart';
@@ -22,49 +23,49 @@ class ThunderMiddleware {
       (request, context) async {
         final startTime = DateTime.now();
         final logId = DateTime.now().microsecondsSinceEpoch.toString();
-        final bodyBytes = await request.bodyBytes;
-        onNetworkActivity(
-          ThunderNetworkLog(
-            id: logId,
-            request: request,
-            isLoading: true,
-            receiveTime: null,
-            sendTime: startTime,
-            sendBytes: utf8.encode(bodyBytes.toString()).length,
-          ),
+
+        var sendBytes = 0;
+        if (request case final http_package.MultipartRequest request) {
+          sendBytes = request.contentLength;
+        } else {
+          sendBytes = utf8.encode(request.bodyBytes.toString()).length;
+        }
+
+        final log = ThunderNetworkLog(
+          id: logId,
+          request: request,
+          isLoading: true,
+          receiveTime: null,
+          sendTime: startTime,
+          sendBytes: sendBytes,
         );
+
+        onNetworkActivity(log);
 
         try {
           final response = await innerHandler(request, context);
 
           final duration = DateTime.now().difference(startTime);
 
-          onNetworkActivity(ThunderNetworkLog(
-            id: logId,
-            sendTime: startTime,
+          onNetworkActivity(log.copyWith(
             receiveTime: DateTime.now(),
             isLoading: false,
-            request: response.request,
             response: response,
             duration: duration,
             receiveBytes: response.contentLength,
-            sendBytes: utf8.encode(bodyBytes.toString()).length,
+            statusCode: response.statusCode,
           ));
 
           return response;
         } on ApiClientException catch (error, _) {
           final duration = DateTime.now().difference(startTime);
-          onNetworkActivity(ThunderNetworkLog(
-            id: logId,
-            sendTime: startTime,
-            request: request,
+          onNetworkActivity(log.copyWith(
             receiveTime: DateTime.now(),
             error: error,
             statusCode: error.statusCode,
+            receiveBytes: utf8.encode(error.data?.toString() ?? '').length,
             duration: duration,
             isLoading: false,
-            receiveBytes: utf8.encode(error.data?.toString() ?? '').length,
-            sendBytes: utf8.encode(bodyBytes.toString()).length,
           ));
 
           rethrow;
