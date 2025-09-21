@@ -58,10 +58,20 @@ extension type ApiClientMiddlewareWrapper._(ApiClientMiddleware _fn) {
 extension type ApiClientRequest(http_package.BaseRequest _request)
     implements http_package.BaseRequest {
   /// The body of the request.
-  String get body => (_request as http_package.Request).body;
+  String get body => switch (_request) {
+        http_package.Request request => request.body,
+        http_package.MultipartRequest request =>
+          request.fields.values.join('\n'),
+        _ => '',
+      };
 
   /// The body bytes of the request.
-  Uint8List get bodyBytes => (_request as http_package.Request).bodyBytes;
+  Future<Uint8List> get bodyBytes async => switch (_request) {
+        http_package.Request request => request.bodyBytes,
+        http_package.MultipartRequest request =>
+          await request.finalize().toBytes(),
+        _ => Uint8List(0),
+      };
 }
 
 /// An HTTP response with a JSON-encoded body.

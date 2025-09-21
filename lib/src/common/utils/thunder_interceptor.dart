@@ -22,6 +22,7 @@ class ThunderMiddleware {
       (request, context) async {
         final startTime = DateTime.now();
         final logId = DateTime.now().microsecondsSinceEpoch.toString();
+        final bodyBytes = await request.bodyBytes;
         onNetworkActivity(
           ThunderNetworkLog(
             id: logId,
@@ -29,7 +30,7 @@ class ThunderMiddleware {
             isLoading: true,
             receiveTime: null,
             sendTime: startTime,
-            sendBytes: utf8.encode(request.bodyBytes.toString()).length,
+            sendBytes: utf8.encode(bodyBytes.toString()).length,
           ),
         );
 
@@ -47,8 +48,7 @@ class ThunderMiddleware {
             response: response,
             duration: duration,
             receiveBytes: response.contentLength,
-            sendBytes:
-                utf8.encode(response.request.bodyBytes.toString()).length,
+            sendBytes: utf8.encode(bodyBytes.toString()).length,
           ));
 
           return response;
@@ -64,7 +64,7 @@ class ThunderMiddleware {
             duration: duration,
             isLoading: false,
             receiveBytes: utf8.encode(error.data?.toString() ?? '').length,
-            sendBytes: utf8.encode(request.bodyBytes.toString()).length,
+            sendBytes: utf8.encode(bodyBytes.toString()).length,
           ));
 
           rethrow;
