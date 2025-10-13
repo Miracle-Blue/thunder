@@ -1,3 +1,7 @@
+## 1.0.2-dev.2
+
+* Fix the issue of the pub score
+
 ## 1.0.2-dev.1
 
 * Thunder logic changed from dio to http client
