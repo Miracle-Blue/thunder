@@ -1,3 +1,7 @@
+## 1.0.2-dev.3
+
+* code formatted
+
 ## 1.0.2-dev.2
 
 * Fix the issue of the pub score

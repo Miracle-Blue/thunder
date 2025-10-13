@@ -32,7 +32,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   static bool _isDialogOpen = false;
 
   /// Adds a Dio instance to be tracked by Thunder
-  static ThunderMiddleware getMiddleware() =>
+  static ThunderMiddleware get getMiddleware =>
       _middlewareInstance ??= ThunderMiddleware(
         onNetworkActivity: (log) =>
             WidgetsBinding.instance.addPostFrameCallback((_) {

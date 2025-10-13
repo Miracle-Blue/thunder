@@ -71,7 +71,7 @@ class Thunder extends StatefulWidget {
   /// Thunder.middleware;
   /// ```
   static ApiClientMiddleware get middleware =>
-      ThunderLogsController.getMiddleware();
+      ThunderLogsController.getMiddleware;
 
   @override
   State<Thunder> createState() => _ThunderState();
