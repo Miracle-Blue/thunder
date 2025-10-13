@@ -80,9 +80,9 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
 
   @override
   Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _buildContentList(),
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: _buildContentList(),
+  );
 
   /// Builds a list of rows representing each key-value pair.
   List<Widget> _buildContentList() =>
@@ -196,14 +196,12 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
     required BuildContext context,
     required String text,
     required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        onTap: onTap,
-        onDoubleTap: () =>
-            Helpers.copyAndShowSnackBar(context, contentToCopy: text),
-        child: Text(text,
-            style: const TextStyle(color: Colors.grey, fontSize: 12)),
-      );
+  }) => GestureDetector(
+    onTap: onTap,
+    onDoubleTap: () =>
+        Helpers.copyAndShowSnackBar(context, contentToCopy: text),
+    child: Text(text, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+  );
 
   /// Returns a widget for nested JSON content.
   Widget _buildContentWidget(Object? content) {
@@ -353,13 +351,12 @@ class _JsonArrayViewerState extends State<JsonArrayViewer> {
     required BuildContext context,
     required String text,
     required VoidCallback onTap,
-  }) =>
-      InkWell(
-        onTap: onTap,
-        onDoubleTap: () =>
-            Helpers.copyAndShowSnackBar(context, contentToCopy: text),
-        child: Text(text, style: const TextStyle(color: Colors.grey)),
-      );
+  }) => InkWell(
+    onTap: onTap,
+    onDoubleTap: () =>
+        Helpers.copyAndShowSnackBar(context, contentToCopy: text),
+    child: Text(text, style: const TextStyle(color: Colors.grey)),
+  );
 
   /// Returns a widget for nested JSON content.
   Widget _buildContentWidget(Object? content) {

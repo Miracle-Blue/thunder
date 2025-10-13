@@ -72,20 +72,19 @@ final class ThunderNetworkLog {
     int? receiveBytes,
     bool? isLoading,
     int? statusCode,
-  }) =>
-      ThunderNetworkLog(
-        sendTime: sendTime ?? this.sendTime,
-        receiveTime: receiveTime ?? this.receiveTime,
-        request: request ?? this.request,
-        response: response ?? this.response,
-        error: error ?? this.error,
-        duration: duration ?? this.duration,
-        isLoading: isLoading ?? this.isLoading,
-        sendBytes: sendBytes ?? this.sendBytes,
-        receiveBytes: receiveBytes ?? this.receiveBytes,
-        id: id,
-        statusCode: statusCode ?? this.statusCode,
-      );
+  }) => ThunderNetworkLog(
+    sendTime: sendTime ?? this.sendTime,
+    receiveTime: receiveTime ?? this.receiveTime,
+    request: request ?? this.request,
+    response: response ?? this.response,
+    error: error ?? this.error,
+    duration: duration ?? this.duration,
+    isLoading: isLoading ?? this.isLoading,
+    sendBytes: sendBytes ?? this.sendBytes,
+    receiveBytes: receiveBytes ?? this.receiveBytes,
+    id: id,
+    statusCode: statusCode ?? this.statusCode,
+  );
 
   @override
   bool operator ==(Object other) {

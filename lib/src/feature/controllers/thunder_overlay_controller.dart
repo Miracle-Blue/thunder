@@ -18,23 +18,23 @@ abstract class ThunderOverlayController extends State<Thunder>
   bool dismissed = true;
 
   void _onStatusChanged(AnimationStatus status) => switch (status) {
-        _ when !mounted => null,
-        AnimationStatus.dismissed => () {
-            if (dismissed) return;
-            setState(() => dismissed = true);
+    _ when !mounted => null,
+    AnimationStatus.dismissed => () {
+      if (dismissed) return;
+      setState(() => dismissed = true);
 
-            if (ThunderLogsController.searchEnabled) {
-              ThunderLogsController.toggleSearch();
-            }
+      if (ThunderLogsController.searchEnabled) {
+        ThunderLogsController.toggleSearch();
+      }
 
-            // Unfocus keyboard when the overlay is dismissed
-            FocusManager.instance.primaryFocus?.unfocus();
-          }(),
-        _ => () {
-            if (!dismissed) return;
-            setState(() => dismissed = false);
-          }(),
-      };
+      // Unfocus keyboard when the overlay is dismissed
+      FocusManager.instance.primaryFocus?.unfocus();
+    }(),
+    _ => () {
+      if (!dismissed) return;
+      setState(() => dismissed = false);
+    }(),
+  };
 
   /// Method that handles the horizontal drag update
   void onHorizontalDragUpdate(DragUpdateDetails details, double width) {
@@ -109,5 +109,6 @@ abstract class ThunderOverlayController extends State<Thunder>
 
     super.dispose();
   }
+
   /* endregion lifecycle */
 }

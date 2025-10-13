@@ -15,39 +15,36 @@ class LogOverviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListView(
-        children: [
-          ListRowItem(name: 'Method', value: log.request.method),
-          ListRowItem(
-            name: 'URL',
-            value: log.request.url.host.isEmpty
-                ? 'Base URL is empty'
-                : log.request.url.host,
-            showCopyButton: true,
-          ),
-          ListRowItem(
-            name: 'Endpoint',
-            value: log.request.url.path.isEmpty
-                ? 'Endpoint is empty'
-                : log.request.url.path,
-            showCopyButton: true,
-          ),
-          ListRowItem(
-            name: 'Status',
-            value: Helpers.getStatusCode(log),
-          ),
-          ListRowItem(
-            name: 'Time',
-            value: log.duration?.formatCompactDuration ?? 'null',
-          ),
-          ListRowItem(
-            name: 'Bytes Sent',
-            value: Helpers.formatBytes(log.sendBytes),
-          ),
-          ListRowItem(
-            name: 'Bytes Received',
-            value: Helpers.formatBytes(log.receiveBytes),
-            showDivider: false,
-          ),
-        ],
-      );
+    children: [
+      ListRowItem(name: 'Method', value: log.request.method),
+      ListRowItem(
+        name: 'URL',
+        value: log.request.url.host.isEmpty
+            ? 'Base URL is empty'
+            : log.request.url.host,
+        showCopyButton: true,
+      ),
+      ListRowItem(
+        name: 'Endpoint',
+        value: log.request.url.path.isEmpty
+            ? 'Endpoint is empty'
+            : log.request.url.path,
+        showCopyButton: true,
+      ),
+      ListRowItem(name: 'Status', value: Helpers.getStatusCode(log)),
+      ListRowItem(
+        name: 'Time',
+        value: log.duration?.formatCompactDuration ?? 'null',
+      ),
+      ListRowItem(
+        name: 'Bytes Sent',
+        value: Helpers.formatBytes(log.sendBytes),
+      ),
+      ListRowItem(
+        name: 'Bytes Received',
+        value: Helpers.formatBytes(log.receiveBytes),
+        showDivider: false,
+      ),
+    ],
+  );
 }

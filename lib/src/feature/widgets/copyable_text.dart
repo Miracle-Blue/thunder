@@ -21,33 +21,31 @@ class CopyableText extends StatefulWidget {
 class _CopyableTextState extends State<CopyableText> {
   @override
   Widget build(BuildContext context) => SelectableText(
-        widget.value ?? 'null',
-        style: widget.style ??
-            const TextStyle(
-              fontSize: 12.5,
-              color: AppColors.gunmetal,
-              fontWeight: FontWeight.w500,
-            ),
-        contextMenuBuilder: (
-          context,
-          editableTextState,
-        ) =>
-            AdaptiveTextSelectionToolbar.buttonItems(
+    widget.value ?? 'null',
+    style:
+        widget.style ??
+        const TextStyle(
+          fontSize: 12.5,
+          color: AppColors.gunmetal,
+          fontWeight: FontWeight.w500,
+        ),
+    contextMenuBuilder: (context, editableTextState) =>
+        AdaptiveTextSelectionToolbar.buttonItems(
           buttonItems: [
             ContextMenuButtonItem(
               onPressed: () {
-                final selectedText =
-                    editableTextState.textEditingValue.selection.textInside(
-                  editableTextState.textEditingValue.text,
-                );
+                final selectedText = editableTextState
+                    .textEditingValue
+                    .selection
+                    .textInside(editableTextState.textEditingValue.text);
 
                 Clipboard.setData(ClipboardData(text: selectedText));
                 ContextMenuController.removeAny();
               },
               type: ContextMenuButtonType.copy,
-            )
+            ),
           ],
           anchors: editableTextState.contextMenuAnchors,
         ),
-      );
+  );
 }

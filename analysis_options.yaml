@@ -1,3 +1,6 @@
+formatter:
+  page_width: 80
+
 analyzer:
   exclude:
     # Build
@@ -231,6 +234,7 @@ linter:
     hash_and_equals: true
     avoid_equals_and_hash_code_on_mutable_classes: true
 
-    # Formatter
+    # Formatter settings
     formatter:
-      line_length: 120
+      line_length: 80
+      trailing_commas: always

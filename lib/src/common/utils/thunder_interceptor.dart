@@ -47,26 +47,30 @@ class ThunderMiddleware {
 
           final duration = DateTime.now().difference(startTime);
 
-          onNetworkActivity(log.copyWith(
-            receiveTime: DateTime.now(),
-            isLoading: false,
-            response: response,
-            duration: duration,
-            receiveBytes: response.contentLength,
-            statusCode: response.statusCode,
-          ));
+          onNetworkActivity(
+            log.copyWith(
+              receiveTime: DateTime.now(),
+              isLoading: false,
+              response: response,
+              duration: duration,
+              receiveBytes: response.contentLength,
+              statusCode: response.statusCode,
+            ),
+          );
 
           return response;
         } on ApiClientException catch (error, _) {
           final duration = DateTime.now().difference(startTime);
-          onNetworkActivity(log.copyWith(
-            receiveTime: DateTime.now(),
-            error: error,
-            statusCode: error.statusCode,
-            receiveBytes: utf8.encode(error.data?.toString() ?? '').length,
-            duration: duration,
-            isLoading: false,
-          ));
+          onNetworkActivity(
+            log.copyWith(
+              receiveTime: DateTime.now(),
+              error: error,
+              statusCode: error.statusCode,
+              receiveBytes: utf8.encode(error.data?.toString() ?? '').length,
+              duration: duration,
+              isLoading: false,
+            ),
+          );
 
           rethrow;
         } finally {}

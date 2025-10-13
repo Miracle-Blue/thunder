@@ -70,30 +70,32 @@ class CopyLogData {
   static final _lines = '─' * 15;
 
   String get _requestHeaders => switch (log.request.headers.isNotEmpty) {
-        true =>
-          'Request headers: ```json\n${log.request.headers.prettyJson}```\n',
-        false => '\r',
-      };
+    true => 'Request headers: ```json\n${log.request.headers.prettyJson}```\n',
+    false => '\r',
+  };
 
-  String get _queryParams =>
-      switch (log.request.url.queryParameters.isNotEmpty) {
-        true =>
-          'Request query params: ```json\n${log.request.url.queryParameters.prettyJson}```\n',
-        false => '\r',
-      };
+  String get _queryParams => switch (log
+      .request
+      .url
+      .queryParameters
+      .isNotEmpty) {
+    true =>
+      'Request query params: ```json\n${log.request.url.queryParameters.prettyJson}```\n',
+    false => '\r',
+  };
 
   String get _requestBody => switch (log.request.body.isNotEmpty) {
-        true => 'Request body: ```json\n${log.request.body.prettyJson}```\n',
-        false => '\r',
-      };
+    true => 'Request body: ```json\n${log.request.body.prettyJson}```\n',
+    false => '\r',
+  };
 
   String get _responseBody => switch (log.response?.body) {
-        Map<String, Object?> body =>
-          'Response body: ```json\n${body.prettyJson}```\n',
-        _ when log.error != null && log.error is ApiClientException =>
-          'Error body: ```json\n${(log.error as ApiClientException).data?.prettyJson}```\n',
-        _ => '\r',
-      };
+    Map<String, Object?> body =>
+      'Response body: ```json\n${body.prettyJson}```\n',
+    _ when log.error != null && log.error is ApiClientException =>
+      'Error body: ```json\n${(log.error as ApiClientException).data?.prettyJson}```\n',
+    _ => '\r',
+  };
 
   /// Method that converts the [ThunderNetworkLog] to a copyable log data string
   String get toCopyableLogData {

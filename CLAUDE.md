@@ -32,6 +32,7 @@ Thunder is a Flutter package that provides a powerful debug overlay for monitori
 ## Development Commands
 
 ### Flutter Commands
+
 ```bash
 # Run the example app
 cd example && flutter run
@@ -47,6 +48,7 @@ flutter analyze
 ```
 
 ### Linting and Code Quality
+
 - The project uses strict analysis options configured in `analysis_options.yaml`
 - Key rules: strict-casts, strict-raw-types, public API documentation required
 - Line length: 120 characters
@@ -72,17 +74,20 @@ lib/
 ## Key Implementation Details
 
 ### State Management
+
 - Uses singleton pattern for ThunderLogsController to maintain state across widget rebuilds
 - Static networkLogs list stores all captured network activity
 - Controller manages UI state (search enabled, dialog open, etc.)
 
 ### Network Interception
+
 - ThunderInterceptor implements Dio's Interceptor interface
 - Tracks request timing using hash code mapping
 - Captures request/response data and calculates byte counts
 - Handles both successful responses and errors
 
 ### UI Features
+
 - Slide-out overlay with animated handle
 - Search functionality for filtering logs by URL/baseURL
 - Sorting options (by time, response time, endpoint, size)
@@ -92,10 +97,12 @@ lib/
 ## Testing and Quality
 
 ### Test Coverage
+
 - Main test file: `test/nexus_test.dart`
 - Example app demonstrates integration patterns
 
 ### Code Style
+
 - Follows Flutter/Dart conventions with strict linting
 - Public APIs require documentation
 - Prefer const constructors and immutable widgets where possible

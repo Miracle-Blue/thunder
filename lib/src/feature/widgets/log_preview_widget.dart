@@ -35,29 +35,29 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
   @override
   // Use a switch-like expression for clarity.
   Widget build(BuildContext context) => switch (widget.log.isLoading) {
-        /// Builds a view for awaiting response.
-        true => const AwaitingResponseWidget(),
+    /// Builds a view for awaiting response.
+    true => const AwaitingResponseWidget(),
 
-        /// Builds the main response view including both horizontal and vertical scrolling.
-        false => SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 2,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildResponsePreview(),
-                    ),
-                  ),
-                ),
+    /// Builds the main response view including both horizontal and vertical scrolling.
+    false => SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 2,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildResponsePreview(),
               ),
             ),
           ),
-      };
+        ),
+      ),
+    ),
+  };
 
   /// Returns a list of widgets representing the preview content.
   List<Widget> _buildResponsePreview() {
@@ -105,34 +105,32 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
 
   /// Builds a view for image responses.
   List<Widget> _buildImageBodyRows() => [
-        Column(
+    Column(
+      children: [
+        const Row(
           children: [
-            const Row(
-              children: [
-                Text('Body: Image',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Image.network(
-              widget.log.request.url.toString(),
-              fit: BoxFit.fill,
-              headers: _buildRequestHeaders(),
-              loadingBuilder: (context, child, loadingProgress) {
-                // Show a progress indicator until image is loaded.
-                if (loadingProgress == null) return child;
-                final expected = loadingProgress.expectedTotalBytes ?? 0;
-                final progress = expected > 0
-                    ? loadingProgress.cumulativeBytesLoaded / expected
-                    : null;
-                return Center(
-                    child: CircularProgressIndicator(value: progress));
-              },
-            ),
-            const SizedBox(height: 8),
+            Text('Body: Image', style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
-      ];
+        const SizedBox(height: 8),
+        Image.network(
+          widget.log.request.url.toString(),
+          fit: BoxFit.fill,
+          headers: _buildRequestHeaders(),
+          loadingBuilder: (context, child, loadingProgress) {
+            // Show a progress indicator until image is loaded.
+            if (loadingProgress == null) return child;
+            final expected = loadingProgress.expectedTotalBytes ?? 0;
+            final progress = expected > 0
+                ? loadingProgress.cumulativeBytesLoaded / expected
+                : null;
+            return Center(child: CircularProgressIndicator(value: progress));
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
+    ),
+  ];
 
   /// Builds a view for very large text responses.
   List<Widget> _buildLargeBodyTextRows() {
@@ -220,8 +218,8 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
 
   /// Extracts request headers from the log as a simple Map.
   Map<String, String> _buildRequestHeaders() => widget.log.request.headers.map(
-        (key, value) => MapEntry(key, value.toString()),
-      );
+    (key, value) => MapEntry(key, value.toString()),
+  );
 
   /// Checks if the response content type is an image.
   bool _isImageResponse() {

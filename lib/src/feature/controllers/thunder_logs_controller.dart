@@ -34,20 +34,21 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   /// Adds a Dio instance to be tracked by Thunder
   static ThunderMiddleware getMiddleware() =>
       _middlewareInstance ??= ThunderMiddleware(
-          onNetworkActivity: (log) =>
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _instance?.setState(() {
-                  final index = networkLogs.indexWhere(
-                    (existingLog) => existingLog.id == log.id,
-                  );
+        onNetworkActivity: (log) =>
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _instance?.setState(() {
+                final index = networkLogs.indexWhere(
+                  (existingLog) => existingLog.id == log.id,
+                );
 
-                  if (index >= 0) {
-                    networkLogs[index] = log;
-                  } else {
-                    networkLogs.add(log);
-                  }
-                });
-              }));
+                if (index >= 0) {
+                  networkLogs[index] = log;
+                } else {
+                  networkLogs.add(log);
+                }
+              });
+            }),
+      );
 
   /// Show the sort by alert dialog and update the sort type.
   static Future<void> onSortLogsTap() async {
@@ -69,14 +70,18 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       if (result != null) sortType = result;
 
       final sortFunction = switch (result) {
-        SortType.createTime => (ThunderNetworkLog a, ThunderNetworkLog b) =>
-            a.sendTime?.compareTo(b.sendTime ?? DateTime.now()) ?? 0,
-        SortType.responseTime => (ThunderNetworkLog a, ThunderNetworkLog b) =>
-            a.duration?.compareTo(b.duration ?? Duration.zero) ?? 0,
-        SortType.endpoint => (ThunderNetworkLog a, ThunderNetworkLog b) =>
-            a.request.url.path.compareTo(b.request.url.path),
-        SortType.responseSize => (ThunderNetworkLog a, ThunderNetworkLog b) =>
-            a.receiveBytes?.compareTo(b.receiveBytes ?? 0) ?? 0,
+        SortType.createTime =>
+          (ThunderNetworkLog a, ThunderNetworkLog b) =>
+              a.sendTime?.compareTo(b.sendTime ?? DateTime.now()) ?? 0,
+        SortType.responseTime =>
+          (ThunderNetworkLog a, ThunderNetworkLog b) =>
+              a.duration?.compareTo(b.duration ?? Duration.zero) ?? 0,
+        SortType.endpoint =>
+          (ThunderNetworkLog a, ThunderNetworkLog b) =>
+              a.request.url.path.compareTo(b.request.url.path),
+        SortType.responseSize =>
+          (ThunderNetworkLog a, ThunderNetworkLog b) =>
+              a.receiveBytes?.compareTo(b.receiveBytes ?? 0) ?? 0,
         _ => null,
       };
 
@@ -111,8 +116,9 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       searchEnabled = !searchEnabled;
 
       if (!searchEnabled && _instance?._tempNetworkLogs != null) {
-        networkLogs =
-            List<ThunderNetworkLog>.from(_instance!._tempNetworkLogs!);
+        networkLogs = List<ThunderNetworkLog>.from(
+          _instance!._tempNetworkLogs!,
+        );
         _instance?._tempNetworkLogs = null;
       }
     });
@@ -120,28 +126,29 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// Method to search logs by their endpoint or base url
   void onSearchChanged(String query) => setState(() {
-        if (query.isEmpty) {
-          if (_tempNetworkLogs != null) {
-            networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
-            _tempNetworkLogs = null;
-          }
-        } else {
-          _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
+    if (query.isEmpty) {
+      if (_tempNetworkLogs != null) {
+        networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
+        _tempNetworkLogs = null;
+      }
+    } else {
+      _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
 
-          networkLogs = _tempNetworkLogs
-                  ?.where(
-                    (log) =>
-                        log.request.url.path.toLowerCase().contains(
-                              query.toLowerCase(),
-                            ) ||
-                        log.request.url.host.toLowerCase().contains(
-                              query.toLowerCase(),
-                            ),
-                  )
-                  .toList() ??
-              [];
-        }
-      });
+      networkLogs =
+          _tempNetworkLogs
+              ?.where(
+                (log) =>
+                    log.request.url.path.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ) ||
+                    log.request.url.host.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ),
+              )
+              .toList() ??
+          [];
+    }
+  });
 
   /// Method to navigate to the log detail screen.
   Future<void> onLogTap(ThunderNetworkLog log) async {

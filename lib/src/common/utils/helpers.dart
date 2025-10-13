@@ -13,11 +13,11 @@ abstract class Helpers {
 
   /// Method that formats the bytes to a human readable format
   static String formatBytes(int? bytes) => switch (bytes) {
-        null || < 0 => '0B',
-        <= _kilobyteAsByte => '${bytes}B',
-        <= _megabyteAsByte => '${_formatDouble(bytes / _kilobyteAsByte)}kB',
-        _ => '${_formatDouble(bytes / _megabyteAsByte)}MB',
-      };
+    null || < 0 => '0B',
+    <= _kilobyteAsByte => '${bytes}B',
+    <= _megabyteAsByte => '${_formatDouble(bytes / _kilobyteAsByte)}kB',
+    _ => '${_formatDouble(bytes / _megabyteAsByte)}MB',
+  };
 
   /// Method that shows a snack bar in iOS style
   static void showSnackBar(

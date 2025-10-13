@@ -24,69 +24,69 @@ class ThunderLogDetailScreen extends StatefulWidget {
 class _ThunderLogDetailScreenState extends ThunderLogDetailController {
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: CupertinoPageScaffold(
-          backgroundColor: AppColors.white,
-          navigationBar: CupertinoNavigationBar(
-            automaticBackgroundVisibility: false,
-            backgroundColor: Colors.white.withValues(alpha: 0.1),
-            leading: GestureDetector(
-              onTap: () => Navigator.of(context).pop<void>(),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 24,
-                color: AppColors.gunmetal,
-              ),
-            ),
-            middle: const Text(
-              'THUNDER - HTTP Request detail',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            bottom: TabBar(
+    onTap: () => FocusScope.of(context).unfocus(),
+    child: CupertinoPageScaffold(
+      backgroundColor: AppColors.white,
+      navigationBar: CupertinoNavigationBar(
+        automaticBackgroundVisibility: false,
+        backgroundColor: Colors.white.withValues(alpha: 0.1),
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop<void>(),
+          child: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 24,
+            color: AppColors.gunmetal,
+          ),
+        ),
+        middle: const Text(
+          'THUNDER - HTTP Request detail',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        bottom: TabBar(
+          controller: tabController,
+          labelColor: AppColors.mainColor,
+          dividerHeight: 0.8,
+          dividerColor: Colors.transparent,
+          indicatorColor: AppColors.mainColor,
+          indicatorSize: TabBarIndicatorSize.tab,
+          tabs: const [
+            Tab(icon: Icon(Icons.info_outline)),
+            Tab(icon: Icon(Icons.arrow_upward_rounded)),
+            Tab(icon: Icon(Icons.arrow_downward_rounded)),
+            Tab(icon: Icon(Icons.preview_outlined)),
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: TabBarView(
               controller: tabController,
-              labelColor: AppColors.mainColor,
-              dividerHeight: 0.8,
-              dividerColor: Colors.transparent,
-              indicatorColor: AppColors.mainColor,
-              indicatorSize: TabBarIndicatorSize.tab,
-              tabs: const [
-                Tab(icon: Icon(Icons.info_outline)),
-                Tab(icon: Icon(Icons.arrow_upward_rounded)),
-                Tab(icon: Icon(Icons.arrow_downward_rounded)),
-                Tab(icon: Icon(Icons.preview_outlined)),
+              children: [
+                LogOverviewWidget(log: widget.log),
+                LogRequestWidget(log: widget.log),
+                LogResponseWidget(log: widget.log),
+                LogPreviewWidget(log: widget.log),
               ],
             ),
           ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: TabBarView(
-                  controller: tabController,
-                  children: [
-                    LogOverviewWidget(log: widget.log),
-                    LogRequestWidget(log: widget.log),
-                    LogResponseWidget(log: widget.log),
-                    LogPreviewWidget(log: widget.log),
-                  ],
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24, bottom: 32),
+              child: FloatingActionButton(
+                onPressed: onCopyLogTap,
+                tooltip: 'Copy full log',
+                backgroundColor: AppColors.mainColor,
+                child: const Icon(
+                  Icons.copy_all_rounded,
+                  color: AppColors.white,
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 24, bottom: 32),
-                  child: FloatingActionButton(
-                    onPressed: onCopyLogTap,
-                    tooltip: 'Copy full log',
-                    backgroundColor: AppColors.mainColor,
-                    child: const Icon(
-                      Icons.copy_all_rounded,
-                      color: AppColors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

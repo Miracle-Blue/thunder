@@ -17,67 +17,70 @@ class ThunderLogsScreen extends StatefulWidget {
 class _ThunderLogsScreenState extends ThunderLogsController {
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: CupertinoPageScaffold(
-          backgroundColor: AppColors.white,
-          navigationBar: CupertinoNavigationBar(
-            backgroundColor: Colors.white.withValues(alpha: 0.1),
-            middle: switch (ThunderLogsController.searchEnabled) {
-              true => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: TextField(
-                    onChanged: onSearchChanged,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Type here...',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              false => null,
-            },
-            leading: switch (ThunderLogsController.searchEnabled) {
-              true => null,
-              false => const Text(
-                  'Thunder Network Monitor',
-                  style: TextStyle(
-                    color: AppColors.lavaStone,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
-                ),
-            },
+    onTap: () => FocusScope.of(context).unfocus(),
+    child: CupertinoPageScaffold(
+      backgroundColor: AppColors.white,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: Colors.white.withValues(alpha: 0.1),
+        middle: switch (ThunderLogsController.searchEnabled) {
+          true => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: TextField(
+              onChanged: onSearchChanged,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Type here...',
+                border: InputBorder.none,
+              ),
+            ),
           ),
-          child: Stack(
-            children: [
-              switch (ThunderLogsController.networkLogs.isEmpty) {
-                true => const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.cloud_off,
-                            size: 48, color: AppColors.grayRussian),
-                        Text(
-                          'No logs here yet',
-                          style: TextStyle(
-                            color: AppColors.grayRussian,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                false => ListView.builder(
-                    itemCount: ThunderLogsController.networkLogs.length,
-                    itemBuilder: (context, index) => LogButton(
-                      log: ThunderLogsController.networkLogs[
-                          ThunderLogsController.networkLogs.length - 1 - index],
-                      onLogTap: onLogTap,
-                    ),
-                  ),
-              },
-            ],
+          false => null,
+        },
+        leading: switch (ThunderLogsController.searchEnabled) {
+          true => null,
+          false => const Text(
+            'Thunder Network Monitor',
+            style: TextStyle(
+              color: AppColors.lavaStone,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
           ),
-        ),
-      );
+        },
+      ),
+      child: Stack(
+        children: [
+          switch (ThunderLogsController.networkLogs.isEmpty) {
+            true => const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.cloud_off, size: 48, color: AppColors.grayRussian),
+                  Text(
+                    'No logs here yet',
+                    style: TextStyle(
+                      color: AppColors.grayRussian,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            false => ListView.builder(
+              itemCount: ThunderLogsController.networkLogs.length,
+              itemBuilder: (context, index) => LogButton(
+                log:
+                    ThunderLogsController.networkLogs[ThunderLogsController
+                            .networkLogs
+                            .length -
+                        1 -
+                        index],
+                onLogTap: onLogTap,
+              ),
+            ),
+          },
+        ],
+      ),
+    ),
+  );
 }

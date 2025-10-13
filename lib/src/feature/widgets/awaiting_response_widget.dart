@@ -15,25 +15,25 @@ class AwaitingResponseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => RepaintBoundary(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                backgroundColor: AppColors.white,
-                color: AppColors.mainColor,
-                strokeCap: StrokeCap.round,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                style: const TextStyle(
-                  color: AppColors.gunmetal,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            backgroundColor: AppColors.white,
+            color: AppColors.mainColor,
+            strokeCap: StrokeCap.round,
           ),
-        ),
-      );
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: const TextStyle(
+              color: AppColors.gunmetal,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
