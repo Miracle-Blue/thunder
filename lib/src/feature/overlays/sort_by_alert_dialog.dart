@@ -85,10 +85,10 @@ class _SortByAlertDialogState extends State<_SortByAlertDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(SortType.values[index].name),
-                Radio<SortType>(
-                  value: SortType.values[index],
+                RadioGroup<SortType?>(
                   groupValue: _sortType,
                   onChanged: (value) => setState(() => _sortType = value),
+                  child: Radio<SortType?>(value: SortType.values[index]),
                 ),
               ],
             ),

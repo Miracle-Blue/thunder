@@ -1,4 +1,9 @@
 {
   "dart.lineLength": 80,
-  "cSpell.words": ["Unstreamed"]
+  "cSpell.words": [
+    "DDMMYYYYH",
+    "endtemplate",
+    "Hmmss",
+    "Unstreamed"
+  ]
 }
