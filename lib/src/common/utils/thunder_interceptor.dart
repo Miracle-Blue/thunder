@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http_package;
-import 'package:meta/meta.dart';
 
 import '../extension/middleware_extensions.dart';
 import '../models/thunder_network_log.dart';

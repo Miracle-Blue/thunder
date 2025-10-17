@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:ui' show Color;
+
+import 'package:flutter/foundation.dart';
 
 import '../extension/middleware_extensions.dart';
 import '../extension/string_extension.dart';
@@ -120,5 +122,15 @@ final class ThunderNetworkLog {
 
   @override
   String toString() =>
-      'ThunderNetworkLog(timestamp: $sendTime, request: $request, response: $response, error: $error, duration: $duration, isLoading: $isLoading, id: $id, sendBytes: $sendBytes, receiveBytes: $receiveBytes, statusCode: $statusCode)';
+      'ThunderNetworkLog('
+      'timestamp: $sendTime, '
+      'request: $request, '
+      'response: $response, '
+      'error: $error, '
+      'duration: $duration, '
+      'isLoading: $isLoading, '
+      'id: $id, '
+      'sendBytes: $sendBytes, '
+      'receiveBytes: $receiveBytes, '
+      'statusCode: $statusCode)';
 }

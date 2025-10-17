@@ -1,7 +1,5 @@
-import 'dart:typed_data' show Uint8List;
-
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http_package;
-import 'package:meta/meta.dart';
 
 /// A function that takes a [http_package.BaseRequest] and returns a [http_package.StreamedResponse].
 /// The [context] parameter is a map that can be used to store data that should be available to all middleware.
@@ -89,9 +87,10 @@ extension type ApiClientRequest(http_package.BaseRequest _request)
 }
 
 /// An HTTP response with a JSON-encoded body.
+@immutable
 final class ApiClientResponse {
   /// Create a new HTTP response with a JSON-encoded body.
-  ApiClientResponse.json(
+  const ApiClientResponse.json(
     this.body, {
     required this.statusCode,
     required this.headers,

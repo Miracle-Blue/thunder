@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
+import 'dart:ui' show Color;
 
 /// Constant class for colors of the package
 sealed class AppColors {
   const AppColors._();
 
   /// The black color
-  static const Color black = Colors.black;
+  static const Color black = Color(0xFF000000);
 
   /// The white color
-  static const Color white = Colors.white;
+  static const Color white = Color(0xFFFFFFFF);
 
   /// The red color
-  static const Color red = Colors.redAccent;
+  static const Color red = Color(0xFFFF2F22);
 
   /// The lava stone color
   static const Color lavaStone = Color(0xFF3b4151);
