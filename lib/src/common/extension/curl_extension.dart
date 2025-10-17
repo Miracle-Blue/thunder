@@ -37,7 +37,7 @@ extension CurlExtension on ApiClientRequest {
     //   curl.write(" \\\n\t  -d '${jsonEncode(request.bodyBytes)}'");
     // }
 
-    curl.write(" \\\n\t  -d '${jsonEncode(request.bodyBytes)}'");
+    curl.write(" \\\n\t  -d '${jsonEncode(request.body)}'");
 
     return addBacktick ? '```shell\n$curl\n```' : curl.toString();
   }
