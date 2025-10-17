@@ -1,6 +1,6 @@
 name: thunder
 description: "Flutter network inspector for Dio client, offering real-time monitoring, detailed logs, and curl command generation for debugging."
-version: 1.0.2-dev.4
+version: 1.0.2-dev.5
 
 homepage: https://github.com/Miracle-Blue/thunder
 repository: https://github.com/Miracle-Blue/thunder
@@ -26,9 +26,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  meta: any
-
   http: any
 
 dev_dependencies:

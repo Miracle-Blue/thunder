@@ -1,3 +1,7 @@
+## 1.0.2-dev.5
+
+* Meta package removed
+
 ## 1.0.2-dev.4
 
 * Curl command generation improved in the log button
