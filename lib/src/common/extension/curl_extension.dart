@@ -13,7 +13,7 @@ import 'middleware_extensions.dart';
 // ```
 extension CurlExtension on ApiClientRequest {
   /// Convert the request options to a complete curl command string
-  String toCurlString() {
+  String toCurlString(final bool addBacktick) {
     final curl = StringBuffer("curl -X '$method'")
       ..write(" \\\n\t '${url.toString()}'");
 
@@ -27,7 +27,9 @@ extension CurlExtension on ApiClientRequest {
     final request = this as Request;
 
     // check have data
-    if (request.bodyBytes.isEmpty) return '```shell\n$curl\n```';
+    if (request.bodyBytes.isEmpty) {
+      return addBacktick ? '```shell\n$curl\n```' : curl.toString();
+    }
 
     // TODO: (Miracle) handle multipart/form-data
     // FormData can't be JSON-serialized, so keep only their fields attributes
@@ -37,9 +39,9 @@ extension CurlExtension on ApiClientRequest {
 
     curl.write(" \\\n\t  -d '${jsonEncode(request.bodyBytes)}'");
 
-    return '```shell\n$curl\n```';
+    return addBacktick ? '```shell\n$curl\n```' : curl.toString();
   }
 
   /// Convert to a single line curl command (for logging/copying)
-  String toCompactCurlString() => toCurlString().replaceAll(' \\\n\t  ', ' ');
+  // String toCompactCurlString() => toCurlString().replaceAll(' \\\n\t  ', ' ');
 }

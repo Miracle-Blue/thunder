@@ -119,7 +119,7 @@ class _ListRowItemState extends State<ListRowItem> {
 
                       return isJson
                           ? '```json\n${widget.value}\n```'
-                          : widget.value ?? '';
+                          : "```json\n${widget.value ?? ''}\n```";
                     }(),
                   ),
                   false => null,
