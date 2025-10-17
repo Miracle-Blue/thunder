@@ -105,22 +105,12 @@ class _ListRowItemState extends State<ListRowItem> {
               IconButton(
                 onPressed: () => Helpers.copyAndShowSnackBar(
                   context,
-                  contentToCopy: widget.value ?? 'null',
+                  contentToCopy: "```json\n${widget.value ?? 'null'}\n```",
                 ),
                 onLongPress: switch (widget.isJson) {
                   true => () => Helpers.copyAndShowSnackBar(
                     context,
-                    contentToCopy: () {
-                      var isJson =
-                          (widget.value?.startsWith('{') ?? false) &&
-                              (widget.value?.endsWith('}') ?? false) ||
-                          (widget.value?.startsWith('[') ?? false) &&
-                              (widget.value?.endsWith(']') ?? false);
-
-                      return isJson
-                          ? '```json\n${widget.value}\n```'
-                          : "```json\n${widget.value ?? ''}\n```";
-                    }(),
+                    contentToCopy: widget.value ?? 'null',
                   ),
                   false => null,
                 },
