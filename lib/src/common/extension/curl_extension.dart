@@ -1,5 +1,3 @@
-import 'dart:convert' show jsonEncode;
-
 import 'package:http/http.dart';
 
 import 'middleware_extensions.dart';
@@ -37,7 +35,7 @@ extension CurlExtension on ApiClientRequest {
     //   curl.write(" \\\n\t  -d '${jsonEncode(request.bodyBytes)}'");
     // }
 
-    curl.write(" \\\n\t  -d '${jsonEncode(request.body)}'");
+    curl.write(" \\\n\t  -d '${request.body}'");
 
     return addBacktick ? '```shell\n$curl\n```' : curl.toString();
   }
