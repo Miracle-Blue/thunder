@@ -1,6 +1,7 @@
 import 'package:http/http.dart';
 
 import 'middleware_extensions.dart';
+import 'object_extension.dart';
 
 /// Extension on [ApiClientRequest] to convert to a curl command string.
 ///
@@ -35,7 +36,7 @@ extension CurlExtension on ApiClientRequest {
     //   curl.write(" \\\n\t  -d '${jsonEncode(request.bodyBytes)}'");
     // }
 
-    curl.write(" \\\n\t  -d '${request.body}'");
+    curl.write(" \\\n\t  -d '${request.body.prettyJsonEncodedBody}'");
 
     return addBacktick ? '```shell\n$curl\n```' : curl.toString();
   }
