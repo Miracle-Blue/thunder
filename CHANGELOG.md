@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Pub score fixed
+
 ## 0.2.3
 
 * Duplicate logs bug fixed
