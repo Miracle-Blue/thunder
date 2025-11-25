@@ -78,7 +78,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
           ListRowItem(name: 'Status', value: Helpers.getStatusCode(widget.log)),
           ListRowItem(name: 'Content-Type', value: _contentType),
 
-          /// Checking whether data is not null, not html, 
+          /// Checking whether data is not null, not html,
           /// json response is enabled, and error is null.
           if (widget.log.response?.body != null &&
               !_contentType.contains('html') &&

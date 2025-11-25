@@ -102,7 +102,7 @@ class CopyLogData {
     final statusCode =
         log.response?.statusCode ??
         (log.error as ApiClientException).statusCode;
-        
+
     final buffer = StringBuffer()
       ..writeln('Server: ${log.request.url.host}')
       ..writeln('Method: ${log.request.method}')

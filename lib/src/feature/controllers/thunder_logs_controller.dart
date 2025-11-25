@@ -6,13 +6,13 @@ import '../overlays/sort_by_alert_dialog.dart';
 import '../screens/thunder_log_detail_screen.dart';
 import '../screens/thunder_logs_screen.dart';
 
-/// Abstract class for the ThunderLogsController controller 
+/// Abstract class for the ThunderLogsController controller
 /// that manages the network logs.
 abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   /// The singleton instance of the controller.
   static ThunderLogsController? _instance;
 
-  /// Singleton instance of the ThunderInterceptor 
+  /// Singleton instance of the ThunderInterceptor
   /// for use before a Thunder widget is created
   static ThunderMiddleware? _middlewareInstance;
 
