@@ -32,13 +32,13 @@ enum SortType {
   bool get isEndpoint => this == endpoint;
 }
 
-/// ------------------------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------
 /// --------------- Sort by alert dialog ---------------
-/// ------------------------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------
 
-/// ------------------------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------
 /// --- Sort by alert dialog ---
-/// ------------------------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------
 Future<SortType?> showSortByAlertDialog(
   BuildContext context, {
   SortType? sortType,
@@ -86,10 +86,11 @@ class _SortByAlertDialogState extends State<_SortByAlertDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(SortType.values[index].name),
-                    Radio<SortType>(
-                      value: SortType.values[index],
-                      groupValue: _sortType,
+                    RadioGroup<SortType?>(
                       onChanged: (value) => setState(() => _sortType = value),
+                      child: Radio<SortType?>(
+                        value: _sortType,
+                      ),
                     ),
                   ],
                 ),

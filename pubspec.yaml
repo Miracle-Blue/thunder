@@ -29,9 +29,11 @@ dependencies:
     sdk: flutter
 
   intl: any
-  dio: '>=5.0.0 <6.0.0'
+  dio: ">=5.0.0 <6.0.0"
   html: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_lints: ^6.0.0

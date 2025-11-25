@@ -19,6 +19,15 @@ class LogButton extends StatelessWidget {
   /// The function to call when the log button is pressed.
   final void Function(ThunderNetworkLog log) onLogTap;
 
+  /// Method to get the request time duration
+  String get requestTimeDuration {
+    final sendTime =
+        DateFormat('HH:mm:ss:SSS').format(log.sendTime ?? DateTime.now());
+    final receiveTime = log.duration.formatCompactDuration;
+
+    return '$sendTime${log.isLoading ? '' : '  │  $receiveTime'}';
+  }
+
   @override
   Widget build(BuildContext context) => CupertinoButton(
         onPressed: () => onLogTap(log),
@@ -126,7 +135,7 @@ class LogButton extends StatelessWidget {
 
                     /// Request Time | Request duration
                     Text(
-                      "${DateFormat('HH:mm:ss:SSS').format(log.sendTime ?? DateTime.now())}${log.isLoading ? '' : '  │  ${log.duration.formatCompactDuration}'}",
+                      requestTimeDuration,
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,

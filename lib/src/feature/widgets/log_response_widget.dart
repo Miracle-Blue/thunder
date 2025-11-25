@@ -74,7 +74,8 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                 ),
                 ListRowItem(name: 'Content-Type', value: _contentType),
 
-                /// Checking whether data is not null, not html, json response is enabled, and error is null.
+                /// Checking whether data is not null, not html,
+                /// json response is enabled, and error is null.
                 if (widget.log.response?.data != null &&
                     !_contentType.contains('html') &&
                     _showJsonResponse &&
@@ -106,7 +107,10 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                     child: Column(
                       children: [
                         const Text(
-                          'The response body is too large to display automatically. Showing it may take a long time or could potentially crash the app.',
+                          'The response body is too large '
+                          'to display automatically. '
+                          'Showing it may take a long time or could '
+                          'potentially crash the app.',
                           style: TextStyle(
                             fontSize: 13,
                             color: AppColors.gunmetal,
@@ -163,7 +167,8 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                     ),
                   ),
 
-                  /// When error data is html, we need to show the error data as html.
+                  /// When error data is html,
+                  /// we need to show the error data as html.
                   if (widget.log.error?.response?.data.toString().contains(
                             '!DOCTYPE html',
                           ) ??

@@ -1,4 +1,4 @@
-library flutter_json_widget;
+library;
 
 import 'package:flutter/material.dart';
 
@@ -30,7 +30,8 @@ class JsonViewerUtils {
   }
 }
 
-/// Main widget that displays a JSON structure in a hierarchical and interactive way.
+/// Main widget that displays a
+/// JSON structure in a hierarchical and interactive way.
 class JsonViewer extends StatelessWidget {
   /// Constructor for the [JsonViewer] class.
   const JsonViewer(this.jsonObj, {super.key});
@@ -41,7 +42,8 @@ class JsonViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _buildContent(jsonObj);
 
-  /// Determines the type of JSON content and delegates to the appropriate viewer.
+  /// Determines the type of
+  /// JSON content and delegates to the appropriate viewer.
   Widget _buildContent(Object? content) {
     if (content == null) return const CopyableText(value: '{}');
 
@@ -175,8 +177,11 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
       }
       return _buildCopyableText(
         context: context,
-        text:
-            'Array<${JsonViewerUtils.getTypeName(value.first)}>[${value.length}]',
+        text: 'Array<'
+            '${JsonViewerUtils.getTypeName(value.first)}'
+            '>['
+            '${value.length}'
+            ']',
         onTap: () =>
             setState(() => _openFlags[key] = !(_openFlags[key] ?? false)),
       );
@@ -232,7 +237,7 @@ class JsonArrayViewer extends StatefulWidget {
   final bool notRoot;
 
   @override
-  _JsonArrayViewerState createState() => _JsonArrayViewerState();
+  State<JsonArrayViewer> createState() => _JsonArrayViewerState();
 }
 
 class _JsonArrayViewerState extends State<JsonArrayViewer> {
@@ -335,8 +340,11 @@ class _JsonArrayViewerState extends State<JsonArrayViewer> {
       }
       return _buildCopyableText(
         context: context,
-        text:
-            'Array<${JsonViewerUtils.getTypeName(value.first)}>[${value.length}]',
+        text: 'Array<'
+            '${JsonViewerUtils.getTypeName(value.first)}'
+            '>['
+            '${value.length}'
+            ']',
         onTap: () => setState(() => _openFlags[index] = !_openFlags[index]),
       );
     }

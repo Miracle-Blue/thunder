@@ -2,7 +2,8 @@ import '../extension/duration_extension.dart';
 import '../extension/object_extension.dart';
 import '../models/thunder_network_log.dart';
 
-/// Class that helps convert the [ThunderNetworkLog] to a copyable log data string
+/// Class that helps convert the
+/// [ThunderNetworkLog] to a copyable log data string
 ///
 /// Example:
 /// Server: jsonplaceholder.typicode.com
@@ -76,14 +77,14 @@ class CopyLogData {
 
   String get _queryParams =>
       switch (log.request.uri.queryParameters.isNotEmpty) {
-        true =>
-          'Request query params: ```json\n${log.request.uri.queryParameters.prettyJson}```\n',
+        true => 'Request query params: '
+            '```json\n${log.request.uri.queryParameters.prettyJson}```\n',
         false => '\r',
       };
 
   String get _requestBody => switch (log.request.data != null) {
-        true =>
-          'Request body: ```json\n${(log.request.data as Object?).prettyJson}```\n',
+        true => 'Request body: '
+            '```json\n${(log.request.data as Object?).prettyJson}```\n',
         false => '\r',
       };
 
@@ -95,17 +96,13 @@ class CopyLogData {
 
   /// Method that converts the [ThunderNetworkLog] to a copyable log data string
   String get toCopyableLogData {
+    final statusCode =
+        log.response?.statusCode ?? log.error?.response?.statusCode;
     final buffer = StringBuffer()
       ..writeln('Server: ${log.request.uri.host}')
       ..writeln('Method: ${log.request.method}')
       ..writeln('Endpoint: ${log.request.uri.path}')
-      ..writeln(
-        'Status: ${log.response?.statusCode ?? log.error?.response?.statusCode}',
-      );
-
-    if (log.response?.statusCode != null) {
-      buffer.writeln('Status: ${log.response?.statusCode}');
-    }
+      ..writeln('Status: $statusCode');
 
     if (log.duration != null) {
       buffer.writeln('Duration: ${log.duration?.formatCompactDuration}');

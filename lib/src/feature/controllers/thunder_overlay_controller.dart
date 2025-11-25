@@ -5,7 +5,8 @@ import '../../common/utils/app_colors.dart';
 import '../../common/utils/thunder_animation_controller.dart';
 import 'thunder_logs_controller.dart';
 
-/// Abstract class that extends [State] and [SingleTickerProviderStateMixin] and helps to control the [Thunder]
+/// Abstract class that extends [State] and
+/// [SingleTickerProviderStateMixin] and helps to control the [Thunder]
 abstract class ThunderOverlayController extends State<Thunder>
     with SingleTickerProviderStateMixin {
   /// Animation controller for the [Thunder]

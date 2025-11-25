@@ -112,6 +112,14 @@ final class ThunderNetworkLog {
       receiveBytes.hashCode;
 
   @override
-  String toString() =>
-      'ThunderNetworkLog(timestamp: $sendTime, request: $request, response: $response, error: $error, duration: $duration, isLoading: $isLoading, id: $id, sendBytes: $sendBytes, receiveBytes: $receiveBytes)';
+  String toString() => 'ThunderNetworkLog('
+      'timestamp: $sendTime, '
+      'request: $request, '
+      'response: $response, '
+      'error: $error, '
+      'duration: $duration, '
+      'isLoading: $isLoading, '
+      'id: $id, '
+      'sendBytes: $sendBytes, '
+      'receiveBytes: $receiveBytes)';
 }

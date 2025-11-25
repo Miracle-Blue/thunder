@@ -1,39 +1,15 @@
+include: package:flutter_lints/flutter.yaml
+
+formatter:
+  page_width: 80
+
 analyzer:
   exclude:
-    # Build
-    - "build/**"
     # Tests
     - "test/**.mocks.dart"
     - ".test_coverage.dart"
-    - "coverage/**"
     # Assets
     - "assets/**"
-    # Generated
-    - "lib/src/common/localization/generated/**"
-    - "lib/src/common/constants/pubspec.yaml.g.dart"
-    - "lib/src/common/model/generated/**"
-    - "**.g.dart"
-    - "**.gql.dart"
-    - "**.freezed.dart"
-    - "**.config.dart"
-    - "**.mocks.dart"
-    - "**.gen.dart"
-    - "**.pb.dart"
-    - "**.pbenum.dart"
-    - "**.pbjson.dart"
-    # Flutter Version Manager
-    - ".fvm/**"
-    # Tools
-    #- "tool/**"
-    - "scripts/**"
-    - ".dart_tool/**"
-    # Platform
-    - "ios/**"
-    - "android/**"
-    - "web/**"
-    - "macos/**"
-    - "windows/**"
-    - "linux/**"
 
   # Enable the following options to enable strong mode.
   language:
@@ -63,28 +39,24 @@ analyzer:
     avoid_types_as_parameter_names: error
     valid_regexps: error
     always_require_non_null_named_parameters: error
-    avoid_positional_boolean_parameters: ignore
 
 linter:
   rules:
-    dangling_library_doc_comments: false
-    missing_code_block_language_in_doc_comment: false
-    package_api_docs: true
+    # Public packages
     public_member_api_docs: true
-    comment_references: true
-    slash_for_doc_comments: true
+    lines_longer_than_80_chars: true
 
     # Enabling rules
     prefer_relative_imports: true
     avoid_relative_lib_imports: true
+    curly_braces_in_flow_control_structures: true
 
     # Disable rules
     sort_pub_dependencies: false
     always_use_package_imports: false
     prefer_final_locals: false
     avoid_escaping_inner_quotes: false
-    curly_braces_in_flow_control_structures: true
-    one_member_abstracts: false
+    unawaited_futures: false
 
     # Enabled
     use_named_constants: true
@@ -193,8 +165,8 @@ linter:
     prefer_single_quotes: true
     prefer_spread_collections: true
     recursive_getters: true
+    slash_for_doc_comments: true
     type_init_formals: true
-    unawaited_futures: true
     unnecessary_const: true
     unnecessary_new: true
     unnecessary_null_in_if_null_operators: true
@@ -203,6 +175,7 @@ linter:
     use_function_type_syntax_for_parameters: true
     use_rethrow_when_possible: true
 
+    # Effective_dart 1.2.0
     camel_case_types: true
     file_names: true
     non_constant_identifier_names: true
@@ -219,6 +192,7 @@ linter:
     avoid_catches_without_on_clauses: true
     avoid_catching_errors: true
     use_to_and_as_if_applicable: true
+    one_member_abstracts: true
     avoid_classes_with_only_static_members: true
     prefer_mixin: true
     use_setters_to_change_properties: true
@@ -230,7 +204,3 @@ linter:
     avoid_positional_boolean_parameters: true
     hash_and_equals: true
     avoid_equals_and_hash_code_on_mutable_classes: true
-
-    # Formatter
-    formatter:
-      line_length: 120

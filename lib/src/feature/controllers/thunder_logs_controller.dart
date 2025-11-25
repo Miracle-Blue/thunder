@@ -9,12 +9,14 @@ import '../overlays/sort_by_alert_dialog.dart';
 import '../screens/thunder_log_detail_screen.dart';
 import '../screens/thunder_logs_screen.dart';
 
-/// Abstract class for the ThunderLogsController controller that manages the network logs.
+/// Abstract class for the ThunderLogsController
+/// controller that manages the network logs.
 abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   /// The singleton instance of the controller.
   static ThunderLogsController? _instance;
 
-  /// Singleton instance of the ThunderInterceptor for use before a Thunder widget is created
+  /// Singleton instance of the ThunderInterceptor
+  /// for use before a Thunder widget is created
   static ThunderInterceptor? _interceptorInstance;
 
   /// The list of network logs.
@@ -48,7 +50,8 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   static String get getDiosHash {
     var buffer = StringBuffer()
       ..write(
-        'You have ${_interceptors.length} dio instances, here are the hashes:\n\n',
+        'You have ${_interceptors.length} dio instances, '
+        'here are the hashes:\n\n',
       )
       ..write('Dio(\n');
 
@@ -83,7 +86,8 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       _interceptors[dio] = interceptor;
     } else {
       _log(
-        'Dio #${dio.hashCode} already has an interceptor, skipping... (baseURL: ${dio.options.baseUrl}) [from addDio method]',
+        'Dio #${dio.hashCode} already has an interceptor, skipping... '
+        '(baseURL: ${dio.options.baseUrl}) [from addDio method]',
       );
     }
 
@@ -95,7 +99,8 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     for (final dio in widget.dios) {
       if (_interceptors.containsKey(dio)) {
         _log(
-          'Dio #${dio.hashCode} already has an interceptor, skipping... (baseURL: ${dio.options.baseUrl}) [from setupInterceptors method]',
+          'Dio #${dio.hashCode} already has an interceptor, skipping... '
+          '(baseURL: ${dio.options.baseUrl}) [from setupInterceptors method]',
         );
         continue;
       }

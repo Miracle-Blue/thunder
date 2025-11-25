@@ -345,7 +345,8 @@ class _HtmlRendererState extends State<HtmlRenderer> {
     }
   }
 
-  /// Handles inline formatting elements like <strong>, <em>, etc. within a paragraph
+  /// Handles inline formatting elements
+  /// like <strong>, <em>, etc. within a paragraph
   Widget _handleInlineElements(dom.Element element) {
     // If the element contains only text, return a simple text widget
     if (element.nodes.length == 1 && element.nodes.first is dom.Text) {

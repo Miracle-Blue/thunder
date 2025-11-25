@@ -1,13 +1,17 @@
 ## 0.2.3
+
 * Duplicate logs bug fixed
 
 ## 0.2.2
+
 * Adding interceptor using Thunder.addDio(dio) method not showing logs bug fixed
 
 ## 0.2.1
+
 * Added CopyableText widget to fix system context menu error in console logs
 
 ## 0.2.0
+
 * Thunder.addDio(dio) method added
 * Thunder.getDiosHash method added
 * Thunder.getInterceptor method deprecated use Thunder.addDio(dio) instead
@@ -17,6 +21,7 @@
 * Fix the issue of the pub score
 
 ## 0.1.0
+
 * Dart version 3.8.0
 
 ## 0.0.9
