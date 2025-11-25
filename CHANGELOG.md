@@ -1,3 +1,7 @@
+## 1.0.2-dev.7
+
+* Pub score fixed
+
 ## 1.0.2-dev.6
 
 * Pub score fixed
