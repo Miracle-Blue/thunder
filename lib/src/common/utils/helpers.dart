@@ -37,7 +37,7 @@ abstract class Helpers {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey.withOpacity(0.9),
+              color: CupertinoColors.systemGrey.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(48),
             ),
             child: Text(

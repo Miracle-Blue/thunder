@@ -36,7 +36,7 @@ final class ThunderInterceptor extends Interceptor {
 
     // Store the start time
     _requestStartTimes[requestKey] = DateTime.now();
-    
+
     // Map the request hash to the log ID
     _requestIdMap[requestKey] = logId;
 
