@@ -11,7 +11,6 @@ A powerful Flutter debug overlay for monitoring network requests in real-time. T
   <img src="https://github.com/Miracle-Blue/thunder/raw/main/screenshots/screenshot_6.png" width="200" alt="Thunder Search Feature">
 </div>
 
-
 ## Features
 
 - 📱 **Simple Integration** - Add a single widget to your app
@@ -78,9 +77,11 @@ class MyApp extends StatelessWidget {
   );
 }
 ```
+
 ### Alternative Setup
 
 You can also add the Thunder interceptor directly to your Dio instance:
+
 ```dart
 final Dio jsonPlaceholderDio = Thunder.addDio(
   Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com')),
@@ -124,6 +125,7 @@ Thunder(
 Thunder attaches to your Dio instances and intercepts all network requests and responses. The data is displayed in a user-friendly interface that can be accessed by tapping the handle on the side of your app.
 
 The overlay shows:
+
 - Request method (GET, POST, PUT, DELETE, etc.)
 - URL
 - Status code

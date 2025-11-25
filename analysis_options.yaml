@@ -48,14 +48,15 @@ linter:
 
     # Enabling rules
     prefer_relative_imports: true
+    avoid_relative_lib_imports: true
+    curly_braces_in_flow_control_structures: true
 
     # Disable rules
-    always_use_package_imports: false
-    avoid_relative_lib_imports: false
     sort_pub_dependencies: false
+    always_use_package_imports: false
     prefer_final_locals: false
     avoid_escaping_inner_quotes: false
-    curly_braces_in_flow_control_structures: false
+    unawaited_futures: false
 
     # Enabled
     use_named_constants: true
@@ -167,7 +168,6 @@ linter:
     recursive_getters: true
     slash_for_doc_comments: true
     type_init_formals: true
-    unawaited_futures: true
     unnecessary_const: true
     unnecessary_new: true
     unnecessary_null_in_if_null_operators: true
