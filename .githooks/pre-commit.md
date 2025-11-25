@@ -20,15 +20,15 @@ This pre-commit hook ensures all staged Dart files are properly formatted and an
 
 4. (Optional but recommended) Install `jq` for better report parsing:
 
-    ```bash
-    brew install jq
+   ```bash
+   brew install jq
    ```
 
 5. (If you using pana) Add pana reports directory to `.gitignore`:
 
-    ```bash
-    echo -e "\n# Pana reports\n.pana_reports/" >> .gitignore
-    ```
+   ```bash
+   echo -e "\n# Pana reports\n.pana_reports/" >> .gitignore
+   ```
 
 ## Usage
 
