@@ -3,7 +3,8 @@ import '../extension/middleware_extensions.dart';
 import '../extension/object_extension.dart';
 import '../models/thunder_network_log.dart';
 
-/// Class that helps convert the [ThunderNetworkLog] to a copyable log data string
+/// Class that helps convert the [ThunderNetworkLog] to a
+/// copyable log data string
 ///
 /// Example:
 /// Server: jsonplaceholder.typicode.com
@@ -74,15 +75,13 @@ class CopyLogData {
     false => '\r',
   };
 
-  String get _queryParams => switch (log
-      .request
-      .url
-      .queryParameters
-      .isNotEmpty) {
-    true =>
-      'Request query params: ```json\n${log.request.url.queryParameters.prettyJson}```\n',
-    false => '\r',
-  };
+  String get _queryParams =>
+      switch (log.request.url.queryParameters.isNotEmpty) {
+        true =>
+          'Request query params: '
+              '```json\n${log.request.url.queryParameters.prettyJson}```\n',
+        false => '\r',
+      };
 
   String get _requestBody => switch (log.request.body.isNotEmpty) {
     true => 'Request body: ```json\n${log.request.body.prettyJson}```\n',
@@ -93,19 +92,22 @@ class CopyLogData {
     Map<String, Object?> body =>
       'Response body: ```json\n${body.prettyJson}```\n',
     _ when log.error != null && log.error is ApiClientException =>
-      'Error body: ```json\n${(log.error as ApiClientException).data?.prettyJson}```\n',
+      'Error body: '
+          '```json\n${(log.error as ApiClientException).data?.prettyJson}```\n',
     _ => '\r',
   };
 
   /// Method that converts the [ThunderNetworkLog] to a copyable log data string
   String get toCopyableLogData {
+    final statusCode =
+        log.response?.statusCode ??
+        (log.error as ApiClientException).statusCode;
+        
     final buffer = StringBuffer()
       ..writeln('Server: ${log.request.url.host}')
       ..writeln('Method: ${log.request.method}')
       ..writeln('Endpoint: ${log.request.url.path}')
-      ..writeln(
-        'Status: ${log.response?.statusCode ?? (log.error as ApiClientException).statusCode}',
-      );
+      ..writeln('Status: $statusCode');
 
     if (log.response?.statusCode != null) {
       buffer.writeln('Status: ${log.response?.statusCode}');

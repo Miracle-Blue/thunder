@@ -56,7 +56,9 @@ abstract class Helpers {
   }) async {
     await Clipboard.setData(ClipboardData(text: contentToCopy));
 
-    showSnackBar(context);
+    if (context.mounted) {
+      showSnackBar(context);
+    }
   }
 
   /// get StatusCode from the log

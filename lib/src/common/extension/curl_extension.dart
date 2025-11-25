@@ -12,7 +12,7 @@ import 'object_extension.dart';
 // ```
 extension CurlExtension on ApiClientRequest {
   /// Convert the request options to a complete curl command string
-  String toCurlString(final bool addBacktick) {
+  String toCurlString({required final bool addBacktick}) {
     final curl = StringBuffer("curl -X '$method'")
       ..write(" \\\n\t '${url.toString()}'");
 

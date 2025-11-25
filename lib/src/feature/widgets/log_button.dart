@@ -25,6 +25,12 @@ class LogButton extends StatefulWidget {
 
 /// State for the [LogButton] widget.
 class _LogButtonState extends State<LogButton> {
+  String get requestTimeDuration {
+    final requestTime = (widget.log.sendTime ?? DateTime.now()).formatHHmmssSSS;
+    final duration = widget.log.duration?.formatCompactDuration ?? '';
+    return requestTime + (widget.log.isLoading ? '' : '  │  $duration');
+  }
+
   /// Method that handles the long press on the log button.
   void _onLongPress(LongPressStartDetails details) {
     final localDx = details.localPosition.dx;
@@ -36,7 +42,9 @@ class _LogButtonState extends State<LogButton> {
 
       Helpers.copyAndShowSnackBar(
         context,
-        contentToCopy: widget.log.request.toCurlString(localDx <= threshold),
+        contentToCopy: widget.log.request.toCurlString(
+          addBacktick: localDx <= threshold,
+        ),
       );
     }
   }
@@ -146,7 +154,7 @@ class _LogButtonState extends State<LogButton> {
 
                   /// Request Time | Request duration
                   Text(
-                    "${(widget.log.sendTime ?? DateTime.now()).formatHHmmssSSS}${widget.log.isLoading ? '' : '  │  ${widget.log.duration.formatCompactDuration}'}",
+                    requestTimeDuration,
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,

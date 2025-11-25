@@ -3,8 +3,10 @@ import 'dart:isolate';
 
 /// Extension on [Object] to convert it to a pretty JSON string.
 extension ObjectExtension on Object? {
-  /// Convert the object to a pretty JSON string asynchronously using an isolate.
-  /// This method is asynchronous and returns a [Future] that resolves to a [String].
+  /// Convert the object to a pretty JSON string asynchronously
+  /// using an isolate.
+  /// This method is asynchronous and returns a
+  /// [Future] that resolves to a [String].
   ///
   /// Example:
   /// ```dart

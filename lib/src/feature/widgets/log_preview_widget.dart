@@ -38,7 +38,8 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
     /// Builds a view for awaiting response.
     true => const AwaitingResponseWidget(),
 
-    /// Builds the main response view including both horizontal and vertical scrolling.
+    /// Builds the main response view including
+    /// both horizontal and vertical scrolling.
     false => SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(
@@ -193,8 +194,11 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
                 name: 'Body',
                 value:
                     'Unsupported body. This widget can render image/text body. '
-                    "Response has Content-Type: $contentType which can't be handled. "
-                    "If you're feeling lucky, try the button below to render body as text, but it may fail or could potentially crash the app.",
+                    'Response has Content-Type: '
+                    "$contentType which can't be handled. "
+                    "If you're feeling lucky, "
+                    'try the button below to render body as text, '
+                    'but it may fail or could potentially crash the app.',
               ),
               ElevatedButton(
                 style: ButtonStyle(
@@ -262,7 +266,8 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
     return data != null && data.toString().length > _kLargeOutputSize;
   }
 
-  /// Formats the body as a pretty JSON string (if possible) or uses its string representation.
+  /// Formats the body as a pretty JSON string
+  /// (if possible) or uses its string representation.
   String _formatBody(Object? body) {
     if (body == null) return '';
     if (body is Map || body is List) {

@@ -10,10 +10,13 @@ import '../controllers/thunder_logs_controller.dart';
 import '../controllers/thunder_overlay_controller.dart';
 import '../screens/thunder_logs_screen.dart';
 
-/// A debug overlay widget that displays network logs and provides debugging tools.
+/// A debug overlay widget that displays
+/// network logs and provides debugging tools.
 ///
-/// The Thunder widget creates a slide-out panel that shows network requests and responses
-/// from provided ApiClient instances. This is particularly useful during development to monitor
+/// The Thunder widget creates a slide-out panel
+/// that shows network requests and responses
+/// from provided ApiClient instances.
+/// This is particularly useful during development to monitor
 /// API interactions, debug network issues, and analyze app behavior.
 ///
 /// Features:
@@ -22,12 +25,13 @@ import '../screens/thunder_logs_screen.dart';
 /// - Allows clearing of logs
 /// - Can be easily toggled with a handle on the side of the screen
 /// - Only active in debug mode by default
-/// ------------------------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------
 /// - [enabled]: Whether to enable the overlay (defaults to kDebugMode)
 /// - [duration]: Animation duration for showing/hiding the overlay
 /// - [child]: The main application widget that Thunder will wrap
 ///
-/// You can use Thunder without initializing the widget by directly adding the middleware to a ApiClient instance:
+/// You can use Thunder without initializing the widget
+/// by directly adding the middleware to a ApiClient instance:
 ///
 /// ```dart
 /// // This will work even before a Thunder widget is created
@@ -45,7 +49,8 @@ class Thunder extends StatefulWidget {
 
   /// Whether to enable the overlay.
   ///
-  /// When false, the Thunder widget simply returns the child without any overlay functionality.
+  /// When false, the Thunder widget simply returns
+  /// the child without any overlay functionality.
   /// Defaults to [kDebugMode] which means it's only enabled in debug builds.
   final bool enabled;
 
@@ -215,7 +220,8 @@ class _ThunderState extends ThunderOverlayController {
       : LayoutBuilder(
           builder: (context, constraints) {
             final biggest = constraints.biggest;
-            // Calculate width of overlay panel, capped at 400 or 99% of screen width
+            // Calculate width of overlay panel,
+            // capped at 400 or 99% of screen width
             final width = math.min<double>(500, biggest.width * 0.99);
 
             return GestureDetector(

@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http_package;
 
-/// A function that takes a [http_package.BaseRequest] and returns a [http_package.StreamedResponse].
-/// The [context] parameter is a map that can be used to store data that should be available to all middleware.
+/// A function that takes a [http_package.BaseRequest] and
+/// returns a [http_package.StreamedResponse].
+/// The [context] parameter is a map that can be used to store data
+/// that should be available to all middleware.
 typedef ApiClientHandler =
     Future<ApiClientResponse> Function(
       ApiClientRequest request,
