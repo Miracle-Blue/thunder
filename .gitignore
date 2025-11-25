@@ -30,3 +30,5 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 build/
 example/macos/Flutter/ephemeral/**
+# Pana reports
+.pana_reports/
