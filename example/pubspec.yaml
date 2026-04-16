@@ -23,3 +23,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Monospace
+      fonts:
+        - asset: assets/fonts/Monospace.ttf
