@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../../common/utils/helpers.dart';
 import 'copyable_text.dart';
 
@@ -66,9 +66,9 @@ class _ListRowItemState extends State<ListRowItem> {
                     ],
                     CopyableText(
                       value: widget.value ?? 'null',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.gunmetal,
+                        color: ThunderColors.of(context).cBlack,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -90,9 +90,9 @@ class _ListRowItemState extends State<ListRowItem> {
                     Flexible(
                       child: CopyableText(
                         value: widget.value ?? 'null',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: AppColors.gunmetal,
+                          color: ThunderColors.of(context).cBlack,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

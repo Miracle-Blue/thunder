@@ -18,19 +18,20 @@ extension StringX on String {
     _ => const Color(0xFF61affe),
   };
 
-  /// Get the method background color.
+  /// Get the method background color: a dark tint of the method color
+  /// (~12% of [methodColor] blended over the dark panel background).
   Color get methodBackgroundColor => switch (toUpperCase()) {
-    'GET' => const Color(0xFFf0f7ff),
-    'POST' => const Color(0xFFeefaf4),
-    'PUT' => const Color(0xFFfff6ec),
-    'DELETE' => const Color(0xFFffecec),
-    'PATCH' => const Color(0xFFfff6ec),
-    'OPTIONS' => const Color(0xFFf5f0ff),
-    'HEAD' => const Color(0xFFf0f0ff),
-    'TRACE' => const Color(0xFFf1f3f5),
-    'CONNECT' => const Color(0xFFedf2f7),
-    'LINK' => const Color(0xFFe0f2fe),
-    'UNLINK' => const Color(0xFFfef2f2),
-    _ => const Color(0xFFf0f7ff),
+    'GET' => const Color(0xFF212A34),
+    'POST' => const Color(0xFF1E2E26),
+    'PUT' => const Color(0xFF33281B),
+    'DELETE' => const Color(0xFF331D1D),
+    'PATCH' => const Color(0xFF33281B),
+    'OPTIONS' => const Color(0xFF261734),
+    'HEAD' => const Color(0xFF261D33),
+    'TRACE' => const Color(0xFF222324),
+    'CONNECT' => const Color(0xFF1E1F22),
+    'LINK' => const Color(0xFF15252D),
+    'UNLINK' => const Color(0xFF301A1A),
+    _ => const Color(0xFF212A34),
   };
 }

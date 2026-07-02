@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/models/thunder_network_log.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../controllers/thunder_log_detail_controller.dart';
 import '../widgets/log_overview_widget.dart';
 import '../widgets/log_preview_widget.dart';
@@ -23,31 +23,36 @@ class ThunderLogDetailScreen extends StatefulWidget {
 
 class _ThunderLogDetailScreenState extends ThunderLogDetailController {
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) => InkWell(
     onTap: () => FocusScope.of(context).unfocus(),
     child: CupertinoPageScaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: ThunderColors.of(context).thunderBackground,
       navigationBar: CupertinoNavigationBar(
         automaticBackgroundVisibility: false,
-        backgroundColor: Colors.white.withValues(alpha: 0.1),
-        leading: GestureDetector(
+        backgroundColor: Colors.black.withValues(alpha: 0.3),
+        leading: InkWell(
           onTap: () => Navigator.of(context).pop<void>(),
-          child: const Icon(
+          child: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 24,
-            color: AppColors.gunmetal,
+            color: ThunderColors.of(context).cBlack,
           ),
         ),
-        middle: const Text(
+        middle: Text(
           'THUNDER - HTTP Request detail',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: ThunderColors.of(context).cWhite,
+          ),
         ),
         bottom: TabBar(
           controller: tabController,
-          labelColor: AppColors.mainColor,
+          labelColor: ThunderColors.of(context).cWhite,
+          unselectedLabelColor: ThunderColors.of(context).gray,
           dividerHeight: 0.8,
           dividerColor: Colors.transparent,
-          indicatorColor: AppColors.mainColor,
+          indicatorColor: ThunderColors.of(context).cWhite,
           indicatorSize: TabBarIndicatorSize.tab,
           tabs: const [
             Tab(icon: Icon(Icons.info_outline)),
@@ -77,10 +82,10 @@ class _ThunderLogDetailScreenState extends ThunderLogDetailController {
               child: FloatingActionButton(
                 onPressed: onCopyLogTap,
                 tooltip: 'Copy full log',
-                backgroundColor: AppColors.mainColor,
-                child: const Icon(
+                backgroundColor: ThunderColors.of(context).surface,
+                child: Icon(
                   Icons.copy_all_rounded,
-                  color: AppColors.white,
+                  color: ThunderColors.of(context).cBlack,
                 ),
               ),
             ),

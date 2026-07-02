@@ -1,14 +1,43 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../common/models/thunder_network_log.dart';
+import '../../common/models/thunder_web_socket_log.dart';
+import '../../common/models/thunder_web_socket_session.dart';
 import '../../common/utils/thunder_interceptor.dart';
+import '../../common/utils/thunder_ws_interceptor.dart';
 import '../overlays/sort_by_alert_dialog.dart';
 import '../screens/thunder_log_detail_screen.dart';
 import '../screens/thunder_logs_screen.dart';
+import '../screens/thunder_ws_log_detail_screen.dart';
+import 'thunder_log_notifier.dart';
+import 'thunder_ws_log_notifier.dart';
+
+/// The section (tab) of the Thunder logs screen.
+enum ThunderSection {
+  /// HTTP request/response logs.
+  http('HTTP'),
+
+  /// WebSocket session logs.
+  socket('Socket');
+
+  /// Constructor for the [ThunderSection] enum.
+  const ThunderSection(this.title);
+
+  /// The title shown on the section's tab.
+  final String title;
+
+  /// Whether this is the HTTP section.
+  bool get isHttp => this == ThunderSection.http;
+
+  /// Whether this is the Socket section.
+  bool get isSocket => this == ThunderSection.socket;
+}
 
 /// Abstract class for the ThunderLogsController controller
 /// that manages the network logs.
-abstract class ThunderLogsController extends State<ThunderLogsScreen> {
+abstract class ThunderLogsController extends State<ThunderLogsScreen>
+    with SingleTickerProviderStateMixin {
   /// The singleton instance of the controller.
   static ThunderLogsController? _instance;
 
@@ -18,6 +47,21 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
 
   /// The list of network logs.
   static List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
+
+  /// The currently visible section (tab) of the logs screen.
+  ///
+  /// The screen updates it on tab changes; the overlay toolbar and the
+  /// static section-aware actions react to it. App-lifetime static —
+  /// never disposed.
+  static final ValueNotifier<ThunderSection> activeSection =
+      ValueNotifier<ThunderSection>(ThunderSection.http);
+
+  /// Canonical list of WebSocket sessions, in creation order.
+  static final List<ThunderWebSocketSession> _allSocketSessions =
+      <ThunderWebSocketSession>[];
+
+  /// The active Socket-tab search query.
+  static String _socketSearchQuery = '';
 
   /// Whether the search is enabled.
   static bool searchEnabled = false;
@@ -33,28 +77,80 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
   /// Whether the sort by alert dialog is currently open.
   static bool _isDialogOpen = false;
 
+  /// The WebSocket sessions to render: the canonical list, or a filtered
+  /// copy while a Socket-tab search query is active.
+  static List<ThunderWebSocketSession> get socketSessions {
+    final query = _socketSearchQuery.trim().toLowerCase();
+    if (!searchEnabled || query.isEmpty) return _allSocketSessions;
+
+    return _allSocketSessions
+        .where(
+          (session) =>
+              session.uri.toString().toLowerCase().contains(query) ||
+              (session.label?.toLowerCase().contains(query) ?? false),
+        )
+        .toList();
+  }
+
   /// Adds a Dio instance to be tracked by Thunder
   static ThunderMiddleware get getMiddleware =>
       _middlewareInstance ??= ThunderMiddleware(
-        onNetworkActivity: (log) =>
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _instance?.setState(() {
-                final index = networkLogs.indexWhere(
-                  (existingLog) => existingLog.id == log.id,
-                );
+        onNetworkActivity: (log) {
+          // Upsert by id: each request emits twice (loading → completed)
+          // and must occupy a single row.
+          final index = networkLogs.indexWhere(
+            (existingLog) => existingLog.id == log.id,
+          );
 
-                if (index >= 0) {
-                  networkLogs[index] = log;
-                } else {
-                  networkLogs.add(log);
-                }
-              });
-            }),
+          if (index >= 0) {
+            networkLogs[index] = log;
+          } else {
+            networkLogs.add(log);
+          }
+
+          _instance?.logNotifier.addLog(log);
+        },
       );
+
+  /// Creates a logging interceptor wired into Thunder's Socket tab.
+  ///
+  /// One interceptor represents one WebSocket connection (one session row).
+  static ThunderWebSocketInterceptor socketLogger({
+    required Uri uri,
+    String? label,
+  }) => ThunderWebSocketInterceptor(
+    uri: uri,
+    label: label,
+    onLog: (log) => _onWebSocketLog(log, label: label),
+  );
+
+  static void _onWebSocketLog(ThunderWebSocketLog log, {String? label}) {
+    final index = _allSocketSessions.indexWhere(
+      (session) => session.id == log.connectionId,
+    );
+
+    final ThunderWebSocketSession session;
+    if (index >= 0) {
+      session = _allSocketSessions[index];
+    } else {
+      session = ThunderWebSocketSession(
+        id: log.connectionId,
+        uri: log.uri,
+        label: label,
+      );
+      _allSocketSessions.add(session);
+    }
+
+    session.addEvent(log);
+    _instance?.webSocketLogNotifier.notify();
+  }
 
   /// Show the sort by alert dialog and update the sort type.
   static Future<void> onSortLogsTap() async {
     if (ThunderLogsController.inLogDetailScreen) return;
+
+    // Sorting applies to HTTP logs only.
+    if (activeSection.value.isSocket) return;
 
     final context = _instance?.context;
     if (context == null) return;
@@ -95,7 +191,7 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     }
   }
 
-  /// Method to delete all network logs.
+  /// Method to delete all logs of the currently visible section.
   static void onDeleteAllLogsTap() {
     if (ThunderLogsController.inLogDetailScreen) return;
 
@@ -103,7 +199,18 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
       Navigator.of(_instance!.context).pop<void>();
     }
 
-    _instance?.setState(networkLogs.clear);
+    _instance?.setState(() {
+      switch (activeSection.value) {
+        case ThunderSection.http:
+          networkLogs.clear();
+          _instance?._tempNetworkLogs = null;
+        case ThunderSection.socket:
+          // Sessions are dropped, not disposed: an open detail screen may
+          // still listen to one; a live connection lazily re-creates its
+          // session on the next event.
+          _allSocketSessions.clear();
+      }
+    });
   }
 
   /// Static method to toggle the search.
@@ -117,40 +224,52 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     _instance?.setState(() {
       searchEnabled = !searchEnabled;
 
-      if (!searchEnabled && _instance?._tempNetworkLogs != null) {
-        networkLogs = List<ThunderNetworkLog>.from(
-          _instance!._tempNetworkLogs!,
-        );
-        _instance?._tempNetworkLogs = null;
+      if (!searchEnabled) {
+        _socketSearchQuery = '';
+
+        if (_instance?._tempNetworkLogs != null) {
+          networkLogs = List<ThunderNetworkLog>.from(
+            _instance!._tempNetworkLogs!,
+          );
+          _instance?._tempNetworkLogs = null;
+        }
       }
     });
   }
 
-  /// Method to search logs by their endpoint or base url
-  void onSearchChanged(String query) => setState(() {
-    if (query.isEmpty) {
-      if (_tempNetworkLogs != null) {
-        networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
-        _tempNetworkLogs = null;
-      }
-    } else {
-      _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
+  /// Method to search logs of the visible section by their endpoint,
+  /// base url or session URI.
+  void onSearchChanged(String query) {
+    switch (ThunderLogsController.activeSection.value) {
+      case ThunderSection.http:
+        setState(() {
+          if (query.isEmpty) {
+            if (_tempNetworkLogs != null) {
+              networkLogs = List<ThunderNetworkLog>.from(_tempNetworkLogs!);
+              _tempNetworkLogs = null;
+            }
+          } else {
+            _tempNetworkLogs ??= List<ThunderNetworkLog>.from(networkLogs);
 
-      networkLogs =
-          _tempNetworkLogs
-              ?.where(
-                (log) =>
-                    log.request.url.path.toLowerCase().contains(
-                      query.toLowerCase(),
-                    ) ||
-                    log.request.url.host.toLowerCase().contains(
-                      query.toLowerCase(),
-                    ),
-              )
-              .toList() ??
-          [];
+            networkLogs =
+                _tempNetworkLogs
+                    ?.where(
+                      (log) =>
+                          log.request.url.path.toLowerCase().contains(
+                            query.toLowerCase(),
+                          ) ||
+                          log.request.url.host.toLowerCase().contains(
+                            query.toLowerCase(),
+                          ),
+                    )
+                    .toList() ??
+                [];
+          }
+        });
+      case ThunderSection.socket:
+        setState(() => ThunderLogsController._socketSearchQuery = query);
     }
-  });
+  }
 
   /// Method to navigate to the log detail screen.
   Future<void> onLogTap(ThunderNetworkLog log) async {
@@ -166,17 +285,64 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen> {
     ThunderLogsController.inLogDetailScreen = false;
   }
 
+  /// Method to navigate to the WebSocket session detail screen.
+  Future<void> onSessionTap(ThunderWebSocketSession session) async {
+    ThunderLogsController.inLogDetailScreen = true;
+
+    await Navigator.push<void>(
+      context,
+      CupertinoPageRoute<void>(
+        builder: (context) => ThunderWsLogDetailScreen(session: session),
+      ),
+    );
+
+    ThunderLogsController.inLogDetailScreen = false;
+  }
+
+  /// The notifier for the network logs.
+  late final ThunderLogNotifier logNotifier;
+
+  /// The notifier for the WebSocket logs.
+  late final ThunderWebSocketLogNotifier webSocketLogNotifier;
+
+  /// The tab controller switching between the HTTP and Socket sections.
+  late final TabController tabController;
+
+  void _onTabChanged() {
+    final section = ThunderSection.values[tabController.index];
+    if (activeSection.value == section) return;
+
+    activeSection.value = section;
+
+    // A half-applied query must not keep filtering the previous section.
+    if (searchEnabled) toggleSearch();
+  }
+
   /* region lifecycle */
   @override
   void initState() {
     super.initState();
     _instance = this;
+    logNotifier = ThunderLogNotifier();
+    webSocketLogNotifier = ThunderWebSocketLogNotifier();
+    tabController = TabController(
+      initialIndex: activeSection.value.index,
+      length: ThunderSection.values.length,
+      vsync: this,
+    )..addListener(_onTabChanged);
   }
 
   @override
   void dispose() {
     // Remove all interceptors
     _middlewareInstance = null;
+
+    tabController
+      ..removeListener(_onTabChanged)
+      ..dispose();
+
+    logNotifier.dispose();
+    webSocketLogNotifier.dispose();
 
     // Only remove instance reference if this is the current instance
     if (_instance == this) {

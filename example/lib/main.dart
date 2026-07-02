@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thunder/thunder.dart';
+import 'package:thunder_example/ws.dart';
 
 import 'api_client.dart';
 
@@ -38,12 +39,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-        builder: (_, child) => Thunder(
-          child: child ?? SizedBox.shrink(),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
         ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+        ),
+        themeMode: ThemeMode.system,
         home: MyHomePage(
           httpDio: _httpDio,
           mainDio: _mainDio,
+        ),
+        builder: (_, child) => Thunder(
+          color: Colors.blueGrey,
+          child: child ?? SizedBox.shrink(),
         ),
       );
 }
@@ -60,6 +77,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static const Color _greenDark = Color(0xFF49cc90);
+
+  void _openWebSocketExample() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const WebSocketExamplePage()),
+    );
+  }
 
   void _runDioRequests() async {
     final ApiClient jsonPlaceholderDio = ApiClient(
@@ -156,6 +179,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: _runDioRequests,
                   style: FilledButton.styleFrom(backgroundColor: _greenDark),
                   child: const Text('Run requests'),
+                ),
+                SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: _openWebSocketExample,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Color(0xFF61affe),
+                  ),
+                  icon: const Icon(Icons.cable),
+                  label: const Text('WebSocket Example'),
                 ),
               ],
             ),

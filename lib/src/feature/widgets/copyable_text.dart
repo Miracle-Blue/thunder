@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 
 /// A custom selectable text widget that displays a string with a copy button.
 class CopyableText extends StatefulWidget {
@@ -24,9 +24,9 @@ class _CopyableTextState extends State<CopyableText> {
     widget.value ?? 'null',
     style:
         widget.style ??
-        const TextStyle(
+        TextStyle(
           fontSize: 12.5,
-          color: AppColors.gunmetal,
+          color: ThunderColors.of(context).cBlack,
           fontWeight: FontWeight.w500,
         ),
     contextMenuBuilder: (context, editableTextState) =>

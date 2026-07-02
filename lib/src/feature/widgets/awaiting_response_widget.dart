@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 
 /// A widget that displays a circular progress indicator and a message.
 class AwaitingResponseWidget extends StatelessWidget {
@@ -20,15 +20,15 @@ class AwaitingResponseWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            backgroundColor: AppColors.white,
-            color: AppColors.mainColor,
+            backgroundColor: ThunderColors.of(context).surface,
+            color: ThunderColors.of(context).brilliantAzure,
             strokeCap: StrokeCap.round,
           ),
           const SizedBox(height: 8),
           Text(
             message,
-            style: const TextStyle(
-              color: AppColors.gunmetal,
+            style: TextStyle(
+              color: ThunderColors.of(context).cBlack,
               fontWeight: FontWeight.w500,
             ),
           ),

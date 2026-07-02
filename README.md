@@ -15,6 +15,7 @@ A powerful Flutter debug overlay for monitoring network requests in real-time. T
 
 - 📱 **Simple Integration** - Add a single widget to your app
 - 📈 **Network Monitoring** - Track all requests and responses from Dio instances
+- 🔌 **WebSocket Monitoring** - Reconnecting `SocketClient` plus a Socket tab with a live per-connection event timeline
 - 🔎 **Search & Filter** - Easily find specific network calls
 - 🗑️ **Clear Logs** - One-tap to remove all logs
 - 👆 **Interactive UI** - Slide-out panel with intuitive controls
@@ -96,6 +97,72 @@ final Dio jsonPlaceholderDio = Thunder.addDio(
 4. Use the search button to find specific requests
 5. Use the filter button to sort requests
 6. Use the delete button to clear all logs
+
+## WebSocket Monitoring
+
+Thunder ships a reconnecting WebSocket client built on
+[`web_socket_channel`](https://pub.dev/packages/web_socket_channel) `^3.0.3`.
+Create it through `Thunder.socketClient` and the whole connection lifecycle —
+sent/received frames, state transitions, errors — is recorded as a session in
+the **Socket** tab of the overlay:
+
+```dart
+final socket = Thunder.socketClient(
+  uri: Uri.parse('wss://echo.websocket.org'),
+  label: 'Echo demo',                              // optional session name
+  reconnectInterval: const Duration(seconds: 3),
+  connectTimeout: const Duration(seconds: 10),
+);
+
+socket.states.listen((state) => print('state: $state'));
+socket.messages.listen((message) => print('message: $message'));
+
+await socket.connect();
+socket.send('hello');
+
+// close() is final: the client stops reconnecting and both streams
+// complete. Create a new client to connect again.
+await socket.close();
+```
+
+The client reconnects indefinitely (spaced by `reconnectInterval`) until
+`close()` is called, and `connect()` never throws on a failed dial — watch
+the `states` stream (`SocketConnecting`, `SocketConnected`,
+`SocketReconnecting`, `SocketDisconnected`) for the outcome.
+
+### Monitoring a self-managed WebSocket
+
+If you already manage your own channel (plain `web_socket_channel`, STOMP,
+GraphQL subscriptions, ...), attach only the logging hook. One interceptor
+equals one session row in the Socket tab:
+
+```dart
+final logger = Thunder.webSocketInterceptor(uri: uri);
+final channel = WebSocketChannel.connect(uri);
+
+logger.logState(const SocketConnecting());
+await channel.ready;
+logger.logState(const SocketConnected());
+
+channel.stream.listen(logger.logReceived);
+
+logger.logSent('hello');
+channel.sink.add('hello');
+```
+
+### The Socket tab
+
+The overlay's **HTTP** and **Socket** tabs work independently, each with its
+own empty state. The Socket tab shows one row per connection — URI, a live
+state dot, `↑ sent` / `↓ received` counters, total bytes and the last
+activity time. Tapping a session opens its chronological timeline where
+frames render as aligned cards and state/error events as centered pills.
+Long-press any timeline row to copy its message text; the floating button
+copies the whole session transcript. The toolbar is tab-aware: search
+filters the visible section and the delete button clears only it.
+
+> **Platform note:** `headers` and `pingInterval` only apply on `dart:io`
+> platforms (Android, iOS, desktop) — browser WebSockets don't support them.
 
 ## Configuration
 

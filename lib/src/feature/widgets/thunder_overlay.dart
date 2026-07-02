@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/extension/middleware_extensions.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
+import '../../common/utils/socket_client.dart';
+import '../../common/utils/thunder_ws_interceptor.dart';
 import '../controllers/thunder_logs_controller.dart';
 import '../controllers/thunder_overlay_controller.dart';
 import '../screens/thunder_logs_screen.dart';
@@ -21,6 +23,8 @@ import '../screens/thunder_logs_screen.dart';
 ///
 /// Features:
 /// - Displays network requests and responses from ApiClient instances
+/// - Records WebSocket traffic in a dedicated Socket tab (see
+///   [Thunder.socketClient] and [Thunder.webSocketInterceptor])
 /// - Provides filtering and search capabilities for logs
 /// - Allows clearing of logs
 /// - Can be easily toggled with a handle on the side of the screen
@@ -78,11 +82,80 @@ class Thunder extends StatefulWidget {
   static ApiClientMiddleware get middleware =>
       ThunderLogsController.getMiddleware.call;
 
+  /// Creates a reconnecting [SocketClient] whose whole lifecycle — frames,
+  /// state changes and errors — is recorded in Thunder's Socket tab.
+  ///
+  /// Example:
+  /// ```dart
+  /// final socket = Thunder.socketClient(
+  ///   uri: Uri.parse('wss://echo.websocket.org'),
+  /// );
+  ///
+  /// socket.states.listen(onStateChanged);
+  /// socket.messages.listen(onMessage);
+  ///
+  /// await socket.connect();
+  /// socket.send('hello');
+  /// ```
+  ///
+  /// The client reconnects on its own until [SocketClient.close] is called;
+  /// closing is final — create a new client to connect again. [headers] and
+  /// [pingInterval] only apply on `dart:io` platforms.
+  static SocketClient socketClient({
+    required Uri uri,
+    String? label,
+    Iterable<String>? protocols,
+    Map<String, Object?>? headers,
+    Duration reconnectInterval = const Duration(seconds: 5),
+    Duration? connectTimeout,
+    Duration? pingInterval,
+  }) => SocketClient(
+    uri: uri,
+    protocols: protocols,
+    headers: headers,
+    reconnectInterval: reconnectInterval,
+    connectTimeout: connectTimeout,
+    pingInterval: pingInterval,
+    interceptor: ThunderLogsController.socketLogger(uri: uri, label: label),
+  );
+
+  /// Creates a logging hook for a self-managed WebSocket connection.
+  ///
+  /// Use it when you manage your own channel (e.g. `web_socket_channel`,
+  /// STOMP, GraphQL subscriptions) and only want the traffic to appear in
+  /// Thunder's Socket tab. One interceptor equals one session row.
+  ///
+  /// Example:
+  /// ```dart
+  /// final logger = Thunder.webSocketInterceptor(uri: uri);
+  ///
+  /// logger.logState(const SocketConnecting());
+  /// channel.stream.listen(logger.logReceived);
+  ///
+  /// logger.logSent('hello');
+  /// channel.sink.add('hello');
+  /// ```
+  static ThunderWebSocketInterceptor webSocketInterceptor({
+    required Uri uri,
+    String? label,
+  }) => ThunderLogsController.socketLogger(uri: uri, label: label);
+
   @override
   State<Thunder> createState() => _ThunderState();
 }
 
 class _ThunderState extends ThunderOverlayController {
+  // Fixed dark theme for the panel. Built from the dark base (never from
+  // the host theme, whose light text colors would leak into the panel) and
+  // pinning ThunderColors.dark so the panel is dark regardless of the app.
+  static final ThemeData _panelTheme = () {
+    final base = ThemeData.dark();
+    return base.copyWith(
+      extensions: const <ThemeExtension<Object?>>[ThunderColors.dark],
+      textTheme: base.textTheme.apply(fontFamily: 'Monospace'),
+    );
+  }();
+
   /// Builds the main content of the Thunder overlay panel.
   ///
   /// This includes:
@@ -123,49 +196,61 @@ class _ThunderState extends ThunderOverlayController {
         children: [
           // Control buttons - only visible when overlay is shown
           if (!dismissed)
-            const Align(
-              alignment: Alignment(0, -0.8),
+            Align(
+              alignment: const Alignment(0, -0.8),
               child: Padding(
-                padding: EdgeInsets.only(left: 4),
+                padding: const EdgeInsets.only(left: 4),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Search button - toggles search functionality in logs
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: ThunderColors.of(context).surface,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
                         onPressed: ThunderLogsController.toggleSearch,
-                        icon: Icon(Icons.search_rounded),
-                        color: Colors.black,
+                        icon: const Icon(Icons.search_rounded),
+                        color: ThunderColors.of(context).cWhite,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    // Filter button - changes sort order of logs
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        onPressed: ThunderLogsController.onSortLogsTap,
-                        icon: Icon(Icons.filter_list_rounded),
-                        color: Colors.black,
-                      ),
+                    const SizedBox(height: 4),
+                    // Filter button - changes sort order of HTTP logs;
+                    // hidden while the Socket tab is active
+                    ValueListenableBuilder<ThunderSection>(
+                      valueListenable: ThunderLogsController.activeSection,
+                      builder: (context, section, child) => section.isSocket
+                          ? const SizedBox.shrink()
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: ThunderColors.of(context).surface,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: IconButton(
+                                    onPressed:
+                                        ThunderLogsController.onSortLogsTap,
+                                    icon: const Icon(Icons.filter_list_rounded),
+                                    color: ThunderColors.of(context).cWhite,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                              ],
+                            ),
                     ),
-                    SizedBox(height: 4),
                     // Delete button - clears all logs
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: ThunderColors.of(context).surface,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
                         onPressed: ThunderLogsController.onDeleteAllLogsTap,
-                        icon: Icon(Icons.delete),
-                        color: Colors.black,
+                        icon: const Icon(Icons.delete),
+                        color: ThunderColors.of(context).cWhite,
                       ),
                     ),
                   ],
@@ -180,7 +265,7 @@ class _ThunderState extends ThunderOverlayController {
               width: handleWidth,
               height: 64,
               child: Material(
-                color: AppColors.mainColor,
+                color: widget.color,
                 borderRadius: const BorderRadius.horizontal(
                   right: Radius.circular(16),
                 ),
@@ -196,9 +281,9 @@ class _ThunderState extends ThunderOverlayController {
                       turns: controller.drive(
                         Tween<double>(begin: 0, end: 0.5),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.chevron_right,
-                        color: Colors.white,
+                        color: ThunderColors.of(context).cBlack,
                         size: 18,
                       ),
                     ),
@@ -265,7 +350,10 @@ class _ThunderState extends ThunderOverlayController {
                         ),
                       ),
                     ),
-                    child: SizedBox(width: width, child: _materialContext()),
+                    child: Theme(
+                      data: _panelTheme,
+                      child: SizedBox(width: width, child: _materialContext()),
+                    ),
                   ),
                 ],
               ),

@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../controllers/thunder_logs_controller.dart';
 import '../widgets/log_button.dart';
+import '../widgets/socket_session_button.dart';
 
 /// Screen that shows the logs of the network requests
 class ThunderLogsScreen extends StatefulWidget {
@@ -15,72 +16,127 @@ class ThunderLogsScreen extends StatefulWidget {
 }
 
 class _ThunderLogsScreenState extends ThunderLogsController {
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: () => FocusScope.of(context).unfocus(),
-    child: CupertinoPageScaffold(
-      backgroundColor: AppColors.white,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: Colors.white.withValues(alpha: 0.1),
-        middle: switch (ThunderLogsController.searchEnabled) {
-          true => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: TextField(
-              onChanged: onSearchChanged,
-              autofocus: true,
-              decoration: const InputDecoration(
-                hintText: 'Type here...',
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          false => null,
-        },
-        leading: switch (ThunderLogsController.searchEnabled) {
-          true => null,
-          false => const Text(
-            'Thunder Network Monitor',
-            style: TextStyle(
-              color: AppColors.lavaStone,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-        },
+  Widget _httpTab() {
+    if (ThunderLogsController.networkLogs.isEmpty) {
+      return const _EmptyState(
+        icon: Icons.cloud_off,
+        message: 'No logs here yet',
+      );
+    }
+
+    return ListView.builder(
+      itemCount: ThunderLogsController.networkLogs.length,
+      itemBuilder: (context, index) => LogButton(
+        log: ThunderLogsController.networkLogs[index],
+        onLogTap: onLogTap,
       ),
-      child: Stack(
-        children: [
-          switch (ThunderLogsController.networkLogs.isEmpty) {
-            true => const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.cloud_off, size: 48, color: AppColors.grayRussian),
-                  Text(
-                    'No logs here yet',
-                    style: TextStyle(
-                      color: AppColors.grayRussian,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+    );
+  }
+
+  Widget _socketTab() {
+    // Snapshot once per build: the getter allocates a filtered copy while
+    // a search query is active, so itemCount/itemBuilder must share it.
+    final sessions = ThunderLogsController.socketSessions;
+
+    if (sessions.isEmpty) {
+      return const _EmptyState(
+        icon: Icons.power_off_rounded,
+        message: 'No socket sessions yet',
+      );
+    }
+
+    return ListView.builder(
+      itemCount: sessions.length,
+      itemBuilder: (context, index) => sessions.isEmpty
+          ? const SizedBox.shrink()
+          : SocketSessionButton(
+              session: sessions.elementAt(sessions.length - index - 1),
+              onSessionTap: onSessionTap,
+            ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: Listenable.merge([logNotifier, webSocketLogNotifier]),
+    builder: (context, child) => InkWell(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: CupertinoPageScaffold(
+        backgroundColor: ThunderColors.of(context).thunderBackground,
+        navigationBar: CupertinoNavigationBar(
+          backgroundColor: Colors.black.withValues(alpha: 0.3),
+          middle: switch (ThunderLogsController.searchEnabled) {
+            true => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: TextField(
+                onChanged: onSearchChanged,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: switch (ThunderLogsController.activeSection.value) {
+                    ThunderSection.http => 'Search host or path...',
+                    ThunderSection.socket => 'Search session URI...',
+                  },
+                  border: InputBorder.none,
+                ),
               ),
             ),
-            false => ListView.builder(
-              itemCount: ThunderLogsController.networkLogs.length,
-              itemBuilder: (context, index) => LogButton(
-                log:
-                    ThunderLogsController.networkLogs[ThunderLogsController
-                            .networkLogs
-                            .length -
-                        1 -
-                        index],
-                onLogTap: onLogTap,
+            false => null,
+          },
+          leading: switch (ThunderLogsController.searchEnabled) {
+            true => null,
+            false => Text(
+              'Thunder Network Monitor',
+              style: TextStyle(
+                color: ThunderColors.of(context).cWhite,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
               ),
             ),
           },
-        ],
+          bottom: TabBar(
+            controller: tabController,
+            labelColor: ThunderColors.of(context).cWhite,
+            unselectedLabelColor: ThunderColors.of(context).gray,
+            dividerHeight: 0.8,
+            dividerColor: Colors.transparent,
+            indicatorColor: ThunderColors.of(context).cWhite,
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: [
+              for (final section in ThunderSection.values)
+                Tab(text: section.title),
+            ],
+          ),
+        ),
+        child: TabBarView(
+          controller: tabController,
+          children: [_httpTab(), _socketTab()],
+        ),
       ),
+    ),
+  );
+}
+
+/// Placeholder shown when a section has no logs yet.
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.icon, required this.message});
+
+  final IconData icon;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 48, color: ThunderColors.of(context).gray),
+        Text(
+          message,
+          style: TextStyle(
+            color: ThunderColors.of(context).gray,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     ),
   );
 }

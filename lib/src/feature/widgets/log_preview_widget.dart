@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../common/models/thunder_network_log.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import 'awaiting_response_widget.dart';
 import 'json_viewer.dart';
 import 'list_row_item.dart';
@@ -143,8 +143,12 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
       const SizedBox(height: 8),
       ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll<Color>(Colors.red.shade300),
-          foregroundColor: const WidgetStatePropertyAll<Color>(Colors.white),
+          backgroundColor: WidgetStatePropertyAll<Color>(
+            ThunderColors.of(context).cRed,
+          ),
+          foregroundColor: WidgetStatePropertyAll<Color>(
+            ThunderColors.of(context).cWhite,
+          ),
         ),
         onPressed: () => setState(() => _showLargeBody = true),
         child: const Text('Show body'),
@@ -203,10 +207,10 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll<Color>(
-                    AppColors.mainColor,
+                    ThunderColors.of(context).surface,
                   ),
-                  foregroundColor: const WidgetStatePropertyAll<Color>(
-                    AppColors.white,
+                  foregroundColor: WidgetStatePropertyAll<Color>(
+                    ThunderColors.of(context).cWhite,
                   ),
                 ),
                 onPressed: () => setState(() => _showUnsupportedBody = true),

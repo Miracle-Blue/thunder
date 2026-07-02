@@ -1,9 +1,16 @@
 ## 1.1.0-dev.1
 
 - WebSocket support added
+- `SocketClient` added — a reconnecting WebSocket client built on `web_socket_channel ^3.0.3` (`connect`/`send`/`close`, broadcast `messages` and `states` streams, indefinite auto-reconnect, `reconnectInterval`/`connectTimeout`/`pingInterval`/`protocols`/`headers`)
+- `Thunder.socketClient` and `Thunder.webSocketInterceptor` added to the public API, along with the `SocketState` sealed hierarchy and the `ThunderWebSocketLog` event model
+- Socket tab added to the overlay with per-connection session rows and a live timeline detail screen (sent/received frames, state and error events, long-press to copy, transcript copy)
+- Toolbar made tab-aware: search and clear act on the visible section; sorting stays HTTP-only
+- HTTP logs no longer duplicate rows (loading and completed entries now share one row)
 - `ThunderLogNotifier` added as a standalone `ChangeNotifier` for network logs
 - `curl_extension.dart` and `middleware_extensions.dart` exported from the public API
 - `ThunderColors` theming utility added for light/dark color support
+- Thunder overlay UI is now fully dark regardless of the host app theme: dark scaffolds, toolbar, handle, HTTP method card tints, buttons, snackbar and JSON viewer, with the panel theme no longer inheriting the host app's text colors
+- `web_socket_channel` and `logbook` added as dependencies
 
 ## 1.0.2-dev.7
 

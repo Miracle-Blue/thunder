@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../extension/middleware_extensions.dart';
 import '../models/thunder_network_log.dart';
+import 'colors.dart';
 
 /// Class that helps with various helper methods
 abstract class Helpers {
@@ -24,6 +25,8 @@ abstract class Helpers {
     BuildContext context, {
     String content = 'Copied to your clipboard!',
   }) {
+    final colors = ThunderColors.of(context);
+
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         bottom: 50,
@@ -33,13 +36,11 @@ abstract class Helpers {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey.withValues(alpha: 0.9),
+              color: colors.surface.withValues(alpha: 0.95),
+              border: Border.all(color: colors.gray),
               borderRadius: BorderRadius.circular(48),
             ),
-            child: Text(
-              content,
-              style: const TextStyle(color: CupertinoColors.white),
-            ),
+            child: Text(content, style: TextStyle(color: colors.cWhite)),
           ),
         ),
       ),

@@ -2,6 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../common/utils/colors.dart';
 import '../../common/utils/helpers.dart';
 import 'copyable_text.dart';
 
@@ -111,7 +112,7 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
                       _openFlags[key] ?? false
                           ? Icons.arrow_drop_down
                           : Icons.arrow_right,
-                      color: Colors.grey[700],
+                      color: ThunderColors.of(context).gray,
                     ),
                   )
                 else
@@ -121,7 +122,9 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
                 CopyableText(
                   value: key,
                   style: TextStyle(
-                    color: value == null ? Colors.grey : Colors.black,
+                    color: value == null
+                        ? Colors.grey
+                        : ThunderColors.of(context).cBlack,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
                   ),
@@ -202,7 +205,7 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
     required BuildContext context,
     required String text,
     required VoidCallback onTap,
-  }) => GestureDetector(
+  }) => InkWell(
     onTap: onTap,
     onDoubleTap: () =>
         Helpers.copyAndShowSnackBar(context, contentToCopy: text),
@@ -280,7 +283,7 @@ class _JsonArrayViewerState extends State<JsonArrayViewer> {
                     borderRadius: BorderRadius.circular(16),
                     child: Icon(
                       _openFlags[i] ? Icons.arrow_drop_down : Icons.arrow_right,
-                      color: Colors.grey[700],
+                      color: ThunderColors.of(context).gray,
                     ),
                   )
                 else
@@ -288,7 +291,9 @@ class _JsonArrayViewerState extends State<JsonArrayViewer> {
                 CopyableText(
                   value: '[$i]',
                   style: TextStyle(
-                    color: value == null ? Colors.grey : Colors.black,
+                    color: value == null
+                        ? Colors.grey
+                        : ThunderColors.of(context).cBlack,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),

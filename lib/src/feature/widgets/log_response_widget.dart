@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../common/extension/middleware_extensions.dart';
 import '../../common/extension/object_extension.dart';
 import '../../common/models/thunder_network_log.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../../common/utils/date_time_extension.dart';
 import '../../common/utils/helpers.dart';
 import 'awaiting_response_widget.dart';
@@ -110,23 +110,23 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
               padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'The response body is too large to display automatically. '
                     'Showing it may take a long time or '
                     'could potentially crash the app.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.gunmetal,
+                      color: ThunderColors.of(context).cBlack,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll<Color>(
-                        AppColors.mainColor,
+                        ThunderColors.of(context).surface,
                       ),
-                      foregroundColor: const WidgetStatePropertyAll<Color>(
-                        AppColors.white,
+                      foregroundColor: WidgetStatePropertyAll<Color>(
+                        ThunderColors.of(context).cWhite,
                       ),
                     ),
                     onPressed: () => setState(() => _showJsonResponse = true),
@@ -148,14 +148,14 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
           ],
 
           if (widget.log.error != null) ...[
-            const Padding(
-              padding: EdgeInsets.all(6),
+            Padding(
+              padding: const EdgeInsets.all(6),
               child: Text(
                 'ERROR details',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.red,
+                  color: ThunderColors.of(context).cRed,
                 ),
               ),
             ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../thunder.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../../common/utils/thunder_animation_controller.dart';
 import 'thunder_logs_controller.dart';
 
@@ -72,12 +72,15 @@ abstract class ThunderOverlayController extends State<Thunder>
     }
   }
 
+  /// The color of the overlay
+  late final Color mColor;
+
   /* region lifecycle */
   @override
   void initState() {
     super.initState();
 
-    AppColors.mainColor = widget.color ?? AppColors.mainColor;
+    mColor = widget.color ?? ThunderColors.of(context).cWhite;
 
     controller = ThunderToolsController(
       value: 0,

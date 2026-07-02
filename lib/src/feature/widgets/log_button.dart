@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../common/extension/curl_extension.dart';
 import '../../common/extension/duration_extension.dart';
 import '../../common/models/thunder_network_log.dart';
-import '../../common/utils/app_colors.dart';
+import '../../common/utils/colors.dart';
 import '../../common/utils/date_time_extension.dart';
 import '../../common/utils/helpers.dart';
 
@@ -28,7 +28,7 @@ class _LogButtonState extends State<LogButton> {
   String get requestTimeDuration {
     final requestTime = (widget.log.sendTime ?? DateTime.now()).formatHHmmssSSS;
     final duration = widget.log.duration?.formatCompactDuration ?? '';
-    return requestTime + (widget.log.isLoading ? '' : '  │  $duration');
+    return requestTime + (widget.log.isLoading ? '' : ' │ $duration');
   }
 
   /// Method that handles the long press on the log button.
@@ -75,10 +75,10 @@ class _LogButtonState extends State<LogButton> {
                   children: [
                     /// For secure request
                     if (widget.log.request.url.host.contains('https')) ...[
-                      const Icon(
+                      Icon(
                         Icons.lock_outline_rounded,
                         size: 10,
-                        color: AppColors.red,
+                        color: ThunderColors.of(context).cRed,
                       ),
                       const SizedBox(width: 4),
                     ],
@@ -87,8 +87,8 @@ class _LogButtonState extends State<LogButton> {
                     Expanded(
                       child: Text(
                         widget.log.request.url.host,
-                        style: const TextStyle(
-                          color: AppColors.grayRussian,
+                        style: TextStyle(
+                          color: ThunderColors.of(context).gray,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -108,8 +108,8 @@ class _LogButtonState extends State<LogButton> {
                       widget.log.request.url.path,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.lavaStone,
+                      style: TextStyle(
+                        color: ThunderColors.of(context).brilliantAzure,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -120,10 +120,10 @@ class _LogButtonState extends State<LogButton> {
                   if (!widget.log.isLoading)
                     Text(
                       '${Helpers.formatBytes(widget.log.sendBytes)} / ${Helpers.formatBytes(widget.log.receiveBytes)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.black,
+                        color: ThunderColors.of(context).cBlack,
                       ),
                     ),
                 ],
@@ -143,8 +143,8 @@ class _LogButtonState extends State<LogButton> {
                     ),
                     child: Text(
                       widget.log.request.method,
-                      style: const TextStyle(
-                        color: AppColors.white,
+                      style: TextStyle(
+                        color: ThunderColors.of(context).cWhite,
                         fontWeight: FontWeight.w500,
                         fontSize: 11,
                       ),
@@ -155,10 +155,10 @@ class _LogButtonState extends State<LogButton> {
                   /// Request Time | Request duration
                   Text(
                     requestTimeDuration,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.black,
+                      color: ThunderColors.of(context).cBlack,
                     ),
                   ),
 
@@ -178,10 +178,10 @@ class _LogButtonState extends State<LogButton> {
                         color: switch (int.tryParse(
                           Helpers.getStatusCode(widget.log),
                         )) {
-                          int i when i >= 200 && i < 300 => const Color(
-                            0xFF2ccc84,
-                          ),
-                          _ => AppColors.red,
+                          int i when i >= 200 && i < 300 => ThunderColors.of(
+                            context,
+                          ).cGreen,
+                          _ => ThunderColors.of(context).cRed,
                         },
                         fontWeight: FontWeight.w700,
                       ),
