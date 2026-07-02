@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:developer' show log;
 
-import 'package:logbook/logbook.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -172,7 +172,7 @@ class SocketClient {
 
     if (_reconnectAttempt == 0) _emitState(const SocketConnecting());
 
-    l.c('Thunder SocketClient: connecting to $uri');
+    log('Thunder SocketClient: connecting to $uri', name: 'TSC');
 
     final channel = connectWebSocketChannel(
       uri,
@@ -191,7 +191,12 @@ class SocketClient {
       if (_closed) return;
 
       _interceptor?.logError(error, stackTrace);
-      l.w(error, stackTrace, 'Thunder SocketClient: connect to $uri failed');
+      log(
+        'Thunder SocketClient: connect to $uri failed',
+        error: error,
+        stackTrace: stackTrace,
+        name: 'TSC',
+      );
       _scheduleReconnect(error: error);
       return;
     }
@@ -211,7 +216,7 @@ class SocketClient {
       cancelOnError: false,
     );
     _emitState(const SocketConnected());
-    l.i('Thunder SocketClient: connected to $uri');
+    log('Thunder SocketClient: connected to $uri', name: 'TSC');
   }
 
   void _scheduleReconnect({
@@ -231,9 +236,10 @@ class SocketClient {
     _reconnectAttempt += 1;
     _emitState(SocketReconnecting(attempt: _reconnectAttempt));
 
-    l.f(
+    log(
       'Thunder SocketClient: retry #$_reconnectAttempt to $uri '
       'in ${reconnectInterval.inMilliseconds}ms',
+      name: 'TSC',
     );
 
     _reconnectTimer?.cancel();
@@ -263,7 +269,12 @@ class SocketClient {
     // The channel always follows an error with a done event; the reconnect
     // is scheduled in _onDone.
     _interceptor?.logError(error, stackTrace);
-    l.w(error, stackTrace, 'Thunder SocketClient: stream error ($uri)');
+    log(
+      'Thunder SocketClient: stream error ($uri)',
+      error: error,
+      stackTrace: stackTrace,
+      name: 'TSC',
+    );
   }
 
   void _onDone(WebSocketChannel channel) {
@@ -276,7 +287,10 @@ class SocketClient {
 
     if (_closed) return;
 
-    l.f('Thunder SocketClient: connection to $uri closed remotely');
+    log(
+      'Thunder SocketClient: connection to $uri closed remotely',
+      name: 'TSC',
+    );
     _scheduleReconnect(
       closeCode: channel.closeCode,
       closeReason: channel.closeReason,
@@ -312,7 +326,7 @@ class SocketClient {
     unawaited(_messagesController.close());
     unawaited(_statesController.close());
 
-    l.c('Thunder SocketClient: closed ($uri)');
+    log('Thunder SocketClient: closed ($uri)', name: 'TSC');
   }
 
   Future<void> _closeChannelQuietly(
@@ -323,7 +337,12 @@ class SocketClient {
     try {
       await channel.sink.close(code, reason);
     } on Object catch (error, stackTrace) {
-      l.w(error, stackTrace, 'Thunder SocketClient: error closing channel');
+      log(
+        'Thunder SocketClient: error closing channel',
+        error: error,
+        stackTrace: stackTrace,
+        name: 'TSC',
+      );
     }
   }
 }
