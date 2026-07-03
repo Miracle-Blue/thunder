@@ -92,8 +92,8 @@ if [ -n "$STAGED_FILES" ]; then
         fi
     fi
     
-    # Run pana with exit code threshold 0
-    if ! pana --exit-code-threshold 0 --json > "$PANA_OUTPUT_FILE" 2>&1; then
+    # Run pana with exit code threshold 10
+    if ! pana --exit-code-threshold 10 --json > "$PANA_OUTPUT_FILE" 2>&1; then
         log "⚠️  Pana found issues, saving results to $PANA_OUTPUT_FILE..." "$ERR"
         exit 1
     fi

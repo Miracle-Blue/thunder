@@ -1,3 +1,8 @@
+## 1.1.0-dev.3
+
+- Overlay screen backgrounds now blend with `Color.lerp` for a smoother, less flat panel look
+- `CopyableText` rendering refined with tighter line-height and letter-spacing
+
 ## 1.1.0-dev.2
 
 - Fixed a "setState()/markNeedsBuild() called during build" crash that occurred when a network request or WebSocket connection was started from a widget's `initState`/build; log notifications emitted during the build phase are now deferred to the end of the frame
