@@ -23,12 +23,13 @@ class _CopyableTextState extends State<CopyableText> {
   Widget build(BuildContext context) => SelectableText(
     widget.value ?? 'null',
     style:
-        widget.style ??
-        TextStyle(
-          fontSize: 12.5,
-          color: ThunderColors.of(context).cBlack,
-          fontWeight: FontWeight.w500,
-        ),
+        (widget.style ??
+                TextStyle(
+                  fontSize: 12.5,
+                  color: ThunderColors.of(context).cBlack,
+                  fontWeight: FontWeight.w500,
+                ))
+            .copyWith(height: 1, letterSpacing: -0.05),
     contextMenuBuilder: (context, editableTextState) =>
         AdaptiveTextSelectionToolbar.buttonItems(
           buttonItems: [

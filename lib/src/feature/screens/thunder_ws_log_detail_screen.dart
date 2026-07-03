@@ -26,7 +26,11 @@ class _ThunderWsLogDetailScreenState extends ThunderWsLogDetailController {
   Widget build(BuildContext context) => InkWell(
     onTap: () => FocusScope.of(context).unfocus(),
     child: Scaffold(
-      backgroundColor: ThunderColors.of(context).thunderBackground,
+      backgroundColor: Color.lerp(
+        ThunderColors.of(context).gray,
+        ThunderColors.of(context).thunderBackground,
+        0.9,
+      ),
       appBar: AppBar(
         backgroundColor: Colors.black.withValues(alpha: 0.3),
         leading: InkWell(

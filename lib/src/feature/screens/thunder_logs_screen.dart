@@ -22,7 +22,11 @@ class _ThunderLogsScreenState extends ThunderLogsController {
     builder: (context, child) => InkWell(
       onTap: () => FocusScope.of(context).unfocus(),
       child: CupertinoPageScaffold(
-        backgroundColor: ThunderColors.of(context).thunderBackground,
+        backgroundColor: Color.lerp(
+          ThunderColors.of(context).gray,
+          ThunderColors.of(context).thunderBackground,
+          0.9,
+        ),
         navigationBar: CupertinoNavigationBar(
           backgroundColor: Colors.black.withValues(alpha: 0.3),
           middle: switch (ThunderLogsController.searchEnabled) {
