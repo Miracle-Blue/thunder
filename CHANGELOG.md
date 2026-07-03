@@ -1,3 +1,7 @@
+## 1.1.0-dev.2
+
+- Fixed a "setState()/markNeedsBuild() called during build" crash that occurred when a network request or WebSocket connection was started from a widget's `initState`/build; log notifications emitted during the build phase are now deferred to the end of the frame
+
 ## 1.1.0-dev.1
 
 - WebSocket support added

@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 
+import '../utils/safe_change_notifier.dart';
 import 'socket_state.dart';
 import 'thunder_web_socket_log.dart';
 
@@ -15,7 +16,8 @@ import 'thunder_web_socket_log.dart';
 /// them for garbage collection.
 ///
 /// Deliberately has no `==`/`hashCode`: the aggregate is mutable.
-final class ThunderWebSocketSession extends ChangeNotifier {
+final class ThunderWebSocketSession extends ChangeNotifier
+    with SafeChangeNotifier {
   /// Constructor for the [ThunderWebSocketSession] class.
   ThunderWebSocketSession({required this.id, required this.uri, this.label})
     : createdAt = DateTime.now();
@@ -87,6 +89,6 @@ final class ThunderWebSocketSession extends ChangeNotifier {
 
     _lastEventAt = log.timestamp;
 
-    notifyListeners();
+    notifyListenersSafely();
   }
 }

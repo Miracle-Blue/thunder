@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 
 import '../../common/models/thunder_network_log.dart';
+import '../../common/utils/safe_change_notifier.dart';
 
 /// Notifier for the network logs.
-final class ThunderLogNotifier extends ChangeNotifier {
+final class ThunderLogNotifier extends ChangeNotifier with SafeChangeNotifier {
   /// The list of network logs.
   List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
 
@@ -19,6 +20,6 @@ final class ThunderLogNotifier extends ChangeNotifier {
       networkLogs.add(log);
     }
 
-    notifyListeners();
+    notifyListenersSafely();
   }
 }

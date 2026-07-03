@@ -123,14 +123,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
-  logbook:
-    dependency: transitive
-    description:
-      name: logbook
-      sha256: "8cf5813a6a08b21e25559bb1c3a14f11bd2e0c0f853912e69932709d3ed577de"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.5"
   matcher:
     dependency: transitive
     description:
@@ -222,7 +214,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.1.0-dev.1"
+    version: "1.1.0-dev.2"
   typed_data:
     dependency: transitive
     description:

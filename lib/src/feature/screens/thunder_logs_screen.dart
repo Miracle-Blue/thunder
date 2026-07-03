@@ -16,46 +16,6 @@ class ThunderLogsScreen extends StatefulWidget {
 }
 
 class _ThunderLogsScreenState extends ThunderLogsController {
-  Widget _httpTab() {
-    if (ThunderLogsController.networkLogs.isEmpty) {
-      return const _EmptyState(
-        icon: Icons.cloud_off,
-        message: 'No logs here yet',
-      );
-    }
-
-    return ListView.builder(
-      itemCount: ThunderLogsController.networkLogs.length,
-      itemBuilder: (context, index) => LogButton(
-        log: ThunderLogsController.networkLogs[index],
-        onLogTap: onLogTap,
-      ),
-    );
-  }
-
-  Widget _socketTab() {
-    // Snapshot once per build: the getter allocates a filtered copy while
-    // a search query is active, so itemCount/itemBuilder must share it.
-    final sessions = ThunderLogsController.socketSessions;
-
-    if (sessions.isEmpty) {
-      return const _EmptyState(
-        icon: Icons.power_off_rounded,
-        message: 'No socket sessions yet',
-      );
-    }
-
-    return ListView.builder(
-      itemCount: sessions.length,
-      itemBuilder: (context, index) => sessions.isEmpty
-          ? const SizedBox.shrink()
-          : SocketSessionButton(
-              session: sessions.elementAt(sessions.length - index - 1),
-              onSessionTap: onSessionTap,
-            ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: Listenable.merge([logNotifier, webSocketLogNotifier]),
@@ -109,7 +69,41 @@ class _ThunderLogsScreenState extends ThunderLogsController {
         ),
         child: TabBarView(
           controller: tabController,
-          children: [_httpTab(), _socketTab()],
+          children: [
+            // HTTP Logs
+            if (ThunderLogsController.networkLogs.isEmpty)
+              const _EmptyState(
+                icon: Icons.cloud_off,
+                message: 'No logs here yet',
+              )
+            else
+              ListView.builder(
+                itemCount: ThunderLogsController.networkLogs.length,
+                itemBuilder: (context, index) => LogButton(
+                  log: ThunderLogsController.networkLogs.elementAt(
+                    ThunderLogsController.networkLogs.length - index - 1,
+                  ),
+                  onLogTap: onLogTap,
+                ),
+              ),
+
+            // Socket Logs
+            if (ThunderLogsController.socketSessions.isEmpty)
+              const _EmptyState(
+                icon: Icons.power_off_rounded,
+                message: 'No socket sessions yet',
+              )
+            else
+              ListView.builder(
+                itemCount: ThunderLogsController.socketSessions.length,
+                itemBuilder: (context, index) => SocketSessionButton(
+                  session: ThunderLogsController.socketSessions.elementAt(
+                    ThunderLogsController.socketSessions.length - index - 1,
+                  ),
+                  onSessionTap: onSessionTap,
+                ),
+              ),
+          ],
         ),
       ),
     ),
