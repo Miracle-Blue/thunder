@@ -47,7 +47,9 @@ abstract class Helpers {
     );
 
     Overlay.of(context).insert(overlayEntry);
-    Future<void>.delayed(const Duration(seconds: 3), overlayEntry.remove);
+    Future<void>.delayed(const Duration(seconds: 3), () {
+      if (overlayEntry.mounted) overlayEntry.remove();
+    });
   }
 
   /// Method that copies the content to the clipboard and shows a snack bar

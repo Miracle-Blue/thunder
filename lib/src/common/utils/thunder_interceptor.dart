@@ -12,9 +12,6 @@ class ThunderMiddleware {
   /// Constructor for the [ThunderMiddleware] class.
   const ThunderMiddleware({required this.onNetworkActivity});
 
-  /// The list of logs
-  // final List<ThunderNetworkLog> _logs = [];
-
   /// The callback to call when a network activity is detected
   final void Function(ThunderNetworkLog log) onNetworkActivity;
 
@@ -28,7 +25,7 @@ class ThunderMiddleware {
         if (request case final http_package.MultipartRequest request) {
           sendBytes = request.contentLength;
         } else {
-          sendBytes = utf8.encode(request.bodyBytes.toString()).length;
+          sendBytes = request.bodyBytes.length;
         }
 
         final log = ThunderNetworkLog(
@@ -73,6 +70,17 @@ class ThunderMiddleware {
           );
 
           rethrow;
-        } finally {}
+        } on Object catch (error) {
+          onNetworkActivity(
+            log.copyWith(
+              receiveTime: DateTime.now(),
+              error: error,
+              duration: DateTime.now().difference(startTime),
+              isLoading: false,
+            ),
+          );
+
+          rethrow;
+        }
       };
 }

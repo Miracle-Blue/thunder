@@ -75,17 +75,17 @@ class _ThunderLogsScreenState extends ThunderLogsController {
           controller: tabController,
           children: [
             // HTTP Logs
-            if (ThunderLogsController.networkLogs.isEmpty)
+            if (ThunderLogsController.visibleNetworkLogs.isEmpty)
               const _EmptyState(
                 icon: Icons.cloud_off,
                 message: 'No logs here yet',
               )
             else
               ListView.builder(
-                itemCount: ThunderLogsController.networkLogs.length,
+                itemCount: ThunderLogsController.visibleNetworkLogs.length,
                 itemBuilder: (context, index) => LogButton(
-                  log: ThunderLogsController.networkLogs.elementAt(
-                    ThunderLogsController.networkLogs.length - index - 1,
+                  log: ThunderLogsController.visibleNetworkLogs.elementAt(
+                    ThunderLogsController.visibleNetworkLogs.length - index - 1,
                   ),
                   onLogTap: onLogTap,
                 ),

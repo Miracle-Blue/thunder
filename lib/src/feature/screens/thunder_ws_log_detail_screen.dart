@@ -23,7 +23,8 @@ class ThunderWsLogDetailScreen extends StatefulWidget {
 
 class _ThunderWsLogDetailScreenState extends ThunderWsLogDetailController {
   @override
-  Widget build(BuildContext context) => InkWell(
+  // GestureDetector, not InkWell: a pushed route has no Material ancestor.
+  Widget build(BuildContext context) => GestureDetector(
     onTap: () => FocusScope.of(context).unfocus(),
     child: Scaffold(
       backgroundColor: Color.lerp(

@@ -50,7 +50,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ThunderWsLogDetailScreen), findsOneWidget);
-    expect(find.text('THUNDER - Socket session'), findsOneWidget);
+    expect(find.text('Socket session'), findsOneWidget);
     expect(find.text('ping'), findsOneWidget);
     expect(find.text('pong'), findsOneWidget);
     expect(find.textContaining('Connected'), findsWidgets);

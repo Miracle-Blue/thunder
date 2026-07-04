@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -182,7 +181,7 @@ class _ThunderState extends ThunderOverlayController {
                     pages: const <Page<void>>[
                       MaterialPage<void>(child: ThunderLogsScreen()),
                     ],
-                    onDidRemovePage: (page) => log('ON DID REMOVE PAGE'),
+                    onDidRemovePage: (_) {},
                   ),
                 ),
               ),

@@ -74,7 +74,7 @@ class _LogButtonState extends State<LogButton> {
                 Row(
                   children: [
                     /// For secure request
-                    if (widget.log.request.url.host.contains('https')) ...[
+                    if (widget.log.request.url.scheme == 'https') ...[
                       Icon(
                         Icons.lock_outline_rounded,
                         size: 10,

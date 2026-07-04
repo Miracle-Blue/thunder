@@ -101,17 +101,16 @@ class CopyLogData {
   String get toCopyableLogData {
     final statusCode =
         log.response?.statusCode ??
-        (log.error as ApiClientException).statusCode;
+        switch (log.error) {
+          ApiClientException(:final statusCode) => statusCode,
+          _ => null,
+        };
 
     final buffer = StringBuffer()
       ..writeln('Server: ${log.request.url.host}')
       ..writeln('Method: ${log.request.method}')
       ..writeln('Endpoint: ${log.request.url.path}')
-      ..writeln('Status: $statusCode');
-
-    if (log.response?.statusCode != null) {
-      buffer.writeln('Status: ${log.response?.statusCode}');
-    }
+      ..writeln('Status: ${statusCode ?? '-'}');
 
     if (log.duration != null) {
       buffer.writeln('Duration: ${log.duration?.formatCompactDuration}');
@@ -142,9 +141,7 @@ class CopyLogData {
       buffer.write('\n$responseBody');
     } else {
       if (log.error != null) {
-        buffer.write(
-          '```json\n${(log.error as ApiClientException).data?.prettyJson}```',
-        );
+        buffer.write('Error: ${log.error}');
       } else {
         buffer.write('Response body is empty');
       }

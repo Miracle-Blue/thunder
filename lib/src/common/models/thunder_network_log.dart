@@ -68,7 +68,7 @@ final class ThunderNetworkLog {
     DateTime? receiveTime,
     ApiClientRequest? request,
     ApiClientResponse? response,
-    ApiClientException? error,
+    Object? error,
     Duration? duration,
     int? sendBytes,
     int? receiveBytes,

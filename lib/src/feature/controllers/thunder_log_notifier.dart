@@ -1,25 +1,12 @@
 import 'package:flutter/foundation.dart';
 
-import '../../common/models/thunder_network_log.dart';
 import '../../common/utils/safe_change_notifier.dart';
 
-/// Notifier for the network logs.
+/// Rebuild trigger for the HTTP tab of the logs screen.
+///
+/// Holds no data — log state lives in the static log list of
+/// `ThunderLogsController`.
 final class ThunderLogNotifier extends ChangeNotifier with SafeChangeNotifier {
-  /// The list of network logs.
-  List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
-
-  /// Method to add a network log.
-  void addLog(ThunderNetworkLog log) {
-    final index = networkLogs.indexWhere(
-      (existingLog) => existingLog.id == log.id,
-    );
-
-    if (index >= 0) {
-      networkLogs[index] = log;
-    } else {
-      networkLogs.add(log);
-    }
-
-    notifyListenersSafely();
-  }
+  /// Notifies listeners that the network log list changed.
+  void notify() => notifyListenersSafely();
 }
