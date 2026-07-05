@@ -1,6 +1,6 @@
 # Thunder ⚡️
 
-A powerful Flutter debug overlay for monitoring network requests in real-time. Thunder provides a convenient slide-out panel that shows all network interactions from your Dio HTTP clients.
+A powerful Flutter debug overlay for monitoring network requests in real-time. Thunder provides a convenient slide-out panel that shows all network interactions from your `package:http`-based clients and WebSockets.
 
 <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px;">
   <img src="https://github.com/Miracle-Blue/thunder/raw/main/screenshots/screenshot_1.png" width="200" alt="Thunder Overview">
@@ -14,7 +14,7 @@ A powerful Flutter debug overlay for monitoring network requests in real-time. T
 ## Features
 
 - 📱 **Simple Integration** - Add a single widget to your app
-- 📈 **Network Monitoring** - Track all requests and responses from Dio instances
+- 📈 **Network Monitoring** - Track all requests and responses via a middleware for `package:http`-based clients
 - 🔌 **WebSocket Monitoring** - Reconnecting `SocketClient` plus a Socket tab with a live per-connection event timeline
 - 🔎 **Search & Filter** - Easily find specific network calls
 - 🗑️ **Clear Logs** - One-tap to remove all logs
@@ -34,7 +34,7 @@ Add Thunder to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  thunder: ^1.0.0  # Replace with actual version
+  thunder: ^1.1.0-dev.3
 ```
 
 Then run:
@@ -47,52 +47,48 @@ flutter pub get
 
 ### Basic Setup
 
-Wrap your app with the `Thunder` widget to start monitoring network requests:
+Wrap your app with the `Thunder` widget and plug `Thunder.middleware` into
+your `package:http`-based client's middleware chain. Thunder exports the
+middleware types (`ApiClientMiddleware`, `ApiClientHandler`,
+`ApiClientRequest`, `ApiClientResponse`); the client itself is yours — see
+the [example app's `ApiClient`](https://github.com/Miracle-Blue/thunder/blob/dev/example/lib/api_client.dart)
+for a complete implementation:
 
 ```dart
 import 'package:thunder/thunder.dart';
-import 'package:dio/dio.dart';
 
 void main() {
-  // Your Dio instances
-  final dio1 = Dio();
-  final dio2 = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+  final client = ApiClient(
+    baseUrl: 'https://jsonplaceholder.typicode.com',
+    middlewares: <ApiClientMiddleware>[Thunder.middleware],
+  );
 
-  runApp(MyApp(dio1: dio1, dio2: dio2));
+  runApp(MyApp(client: client));
 }
 
 class MyApp extends StatelessWidget {
-  final Dio dio1;
-  final Dio dio2;
+  const MyApp({required this.client, super.key});
 
-  const MyApp({required this.dio1, required this.dio2, super.key});
+  final ApiClient client;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'My App',
     home: const HomePage(),
-    builder: (context, child) => Thunder(
-      dio: [dio1, dio2],
-      child: child ?? const SizedBox.shrink(),
-    ),
+    builder: (context, child) =>
+        Thunder(child: child ?? const SizedBox.shrink()),
   );
 }
 ```
 
-### Alternative Setup
-
-You can also add the Thunder interceptor directly to your Dio instance:
-
-```dart
-final Dio jsonPlaceholderDio = Thunder.addDio(
-  Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com')),
-);
-```
+`Thunder.middleware` works even before a `Thunder` widget is created, so the
+client can be constructed anywhere — requests made before the overlay mounts
+are captured once it appears.
 
 ### How to Use
 
 1. Run your app in debug mode
-2. Tap the green handle on the left side of the screen to reveal the Thunder panel
+2. Tap the handle on the left side of the screen to reveal the Thunder panel
 3. Make network requests in your app to see them appear in the panel
 4. Use the search button to find specific requests
 5. Use the filter button to sort requests
@@ -170,16 +166,13 @@ Thunder can be customized with these parameters:
 
 ```dart
 Thunder(
-  // List of Dio instances to monitor
-  dio: [dio1, dio2],
-
   // Optional: Enable/disable the overlay (defaults to kDebugMode)
-  enable: true,
+  enabled: true,
 
   // Optional: Animation duration for the slide-out panel
   duration: const Duration(milliseconds: 250),
 
-  // Optional: Color of the overlay
+  // Optional: Color of the handle
   color: Colors.green,
 
   // Required: Your app's main widget
@@ -189,7 +182,9 @@ Thunder(
 
 ## How It Works
 
-Thunder attaches to your Dio instances and intercepts all network requests and responses. The data is displayed in a user-friendly interface that can be accessed by tapping the handle on the side of your app.
+Every request flowing through `Thunder.middleware` is captured — request,
+response, error and timing — and displayed in a user-friendly interface that
+can be accessed by tapping the handle on the side of your app.
 
 The overlay shows:
 
@@ -198,8 +193,7 @@ The overlay shows:
 - Status code
 - Response time
 - Request and response headers
-- Request and response bodies
-- HTML response body
+- Request and response bodies (HTML bodies are detected and flagged, not rendered)
 
 ## Example Project
 

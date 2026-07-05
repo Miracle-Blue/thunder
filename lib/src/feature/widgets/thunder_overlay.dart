@@ -62,9 +62,9 @@ class Thunder extends StatefulWidget {
   /// Controls how quickly the overlay slides in and out.
   final Duration duration;
 
-  /// The color of the [Thunder].
+  /// The color of the [Thunder] handle.
   ///
-  /// Defaults to green.
+  /// When null, the handle uses the ambient [Material] default color.
   final Color? color;
 
   /// The child widget (the main widget of the app).
