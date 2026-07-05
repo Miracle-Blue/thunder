@@ -43,7 +43,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
     false => SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 2,
+        width: MediaQuery.sizeOf(context).width * 2,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SafeArea(
@@ -191,7 +191,7 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
     } else {
       rows.addAll([
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
+          width: MediaQuery.sizeOf(context).width * 0.8,
           child: Column(
             children: [
               ListRowItem(

@@ -9,7 +9,7 @@ import '../../common/utils/date_time_extension.dart';
 import '../../common/utils/helpers.dart';
 
 /// A widget that displays a button for a network log.
-class LogButton extends StatefulWidget {
+class LogButton extends StatelessWidget {
   /// Constructor for the [LogButton] class.
   const LogButton({required this.log, required this.onLogTap, super.key});
 
@@ -19,20 +19,14 @@ class LogButton extends StatefulWidget {
   /// The function to call when the log button is pressed.
   final void Function(ThunderNetworkLog log) onLogTap;
 
-  @override
-  State<LogButton> createState() => _LogButtonState();
-}
-
-/// State for the [LogButton] widget.
-class _LogButtonState extends State<LogButton> {
-  String get requestTimeDuration {
-    final requestTime = (widget.log.sendTime ?? DateTime.now()).formatHHmmssSSS;
-    final duration = widget.log.duration?.formatCompactDuration ?? '';
-    return requestTime + (widget.log.isLoading ? '' : ' │ $duration');
+  String get _requestTimeDuration {
+    final requestTime = (log.sendTime ?? DateTime.now()).formatHHmmssSSS;
+    final duration = log.duration?.formatCompactDuration ?? '';
+    return requestTime + (log.isLoading ? '' : ' │ $duration');
   }
 
   /// Method that handles the long press on the log button.
-  void _onLongPress(LongPressStartDetails details) {
+  void _onLongPress(BuildContext context, LongPressStartDetails details) {
     final localDx = details.localPosition.dx;
 
     final renderObject = context.findRenderObject();
@@ -42,7 +36,7 @@ class _LogButtonState extends State<LogButton> {
 
       Helpers.copyAndShowSnackBar(
         context,
-        contentToCopy: widget.log.request.toCurlString(
+        contentToCopy: log.request.toCurlString(
           addBacktick: localDx <= threshold,
         ),
       );
@@ -50,149 +44,151 @@ class _LogButtonState extends State<LogButton> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onLongPressStart: _onLongPress,
-    child: CupertinoButton(
-      onPressed: () => widget.onLogTap(widget.log),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Material(
-        elevation: 3,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          width: double.infinity,
-          clipBehavior: Clip.hardEdge,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: widget.log.methodBackgroundColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: widget.log.methodColor),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.log.request.url.host.isNotEmpty)
+  Widget build(BuildContext context) {
+    final colors = ThunderColors.of(context);
+    final statusCode = Helpers.getStatusCode(log);
+
+    return GestureDetector(
+      onLongPressStart: (details) => _onLongPress(context, details),
+      child: CupertinoButton(
+        onPressed: () => onLogTap(log),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: Material(
+          elevation: 3,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            width: double.infinity,
+            clipBehavior: Clip.hardEdge,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: log.methodBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: log.methodColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (log.request.url.host.isNotEmpty)
+                  Row(
+                    children: [
+                      /// For secure request
+                      if (log.request.url.scheme == 'https') ...[
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 10,
+                          color: colors.cRed,
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+
+                      /// Request Base URL
+                      Expanded(
+                        child: Text(
+                          log.request.url.host,
+                          style: TextStyle(
+                            color: colors.gray,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 4),
+
+                /// Request Path
                 Row(
                   children: [
-                    /// For secure request
-                    if (widget.log.request.url.scheme == 'https') ...[
-                      Icon(
-                        Icons.lock_outline_rounded,
-                        size: 10,
-                        color: ThunderColors.of(context).cRed,
-                      ),
-                      const SizedBox(width: 4),
-                    ],
-
-                    /// Request Base URL
                     Expanded(
                       child: Text(
-                        widget.log.request.url.host,
-                        style: TextStyle(
-                          color: ThunderColors.of(context).gray,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        log.request.url.path,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: colors.brilliantAzure,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
+
+                    /// Request Size
+                    if (!log.isLoading)
+                      Text(
+                        '${Helpers.formatBytes(log.sendBytes)}'
+                        ' / ${Helpers.formatBytes(log.receiveBytes)}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: colors.cBlack,
+                        ),
+                      ),
                   ],
                 ),
-              const SizedBox(height: 4),
-
-              /// Request Path
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.log.request.url.path,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: ThunderColors.of(context).brilliantAzure,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /// Request Method (GET, POST, PUT, DELETE)
+                    Container(
+                      width: 60,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: log.methodColor,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        log.request.method,
+                        style: TextStyle(
+                          color: colors.cWhite,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
 
-                  /// Request Size
-                  if (!widget.log.isLoading)
+                    /// Request Time | Request duration
                     Text(
-                      '${Helpers.formatBytes(widget.log.sendBytes)} / ${Helpers.formatBytes(widget.log.receiveBytes)}',
+                      _requestTimeDuration,
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: ThunderColors.of(context).cBlack,
+                        color: colors.cBlack,
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  /// Request Method (GET, POST, PUT, DELETE)
-                  Container(
-                    width: 60,
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: widget.log.methodColor,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      widget.log.request.method,
-                      style: TextStyle(
-                        color: ThunderColors.of(context).cWhite,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 11,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
 
-                  /// Request Time | Request duration
-                  Text(
-                    requestTimeDuration,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: ThunderColors.of(context).cBlack,
-                    ),
-                  ),
-
-                  switch (widget.log.isLoading) {
-                    true => SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        color: widget.log.methodColor,
-                        strokeCap: StrokeCap.round,
-                        strokeWidth: 3,
+                    switch (log.isLoading) {
+                      true => SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: log.methodColor,
+                          strokeCap: StrokeCap.round,
+                          strokeWidth: 3,
+                        ),
                       ),
-                    ),
-                    false => Text(
-                      Helpers.getStatusCode(widget.log),
-                      style: TextStyle(
-                        color: switch (int.tryParse(
-                          Helpers.getStatusCode(widget.log),
-                        )) {
-                          int i when i >= 200 && i < 300 => ThunderColors.of(
-                            context,
-                          ).cGreen,
-                          _ => ThunderColors.of(context).cRed,
-                        },
-                        fontWeight: FontWeight.w700,
+                      false => Text(
+                        statusCode,
+                        style: TextStyle(
+                          color: switch (int.tryParse(statusCode)) {
+                            int i when i >= 200 && i < 300 => colors.cGreen,
+                            _ => colors.cRed,
+                          },
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  },
-                ],
-              ),
-            ],
+                    },
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

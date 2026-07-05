@@ -96,7 +96,7 @@ class _LogResponseWidgetState extends State<LogResponseWidget> {
                       isJson: true,
                     ),
                     _ => SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.5,
+                      height: MediaQuery.sizeOf(context).height * 0.5,
                       child: const AwaitingResponseWidget(
                         message: 'Rendering JSON...',
                       ),

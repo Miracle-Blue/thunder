@@ -36,7 +36,8 @@ class SocketSessionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateColor = _stateColor(context, session.state);
+    final colors = ThunderColors.of(context);
+    final stateColor = _stateColor(colors, session.state);
 
     return InkWell(
       onLongPress: () => Helpers.copyAndShowSnackBar(
@@ -78,7 +79,7 @@ class SocketSessionButton extends StatelessWidget {
                       Icon(
                         Icons.lock_outline_rounded,
                         size: 10,
-                        color: ThunderColors.of(context).cRed,
+                        color: colors.cRed,
                       ),
                       const SizedBox(width: 4),
                     ],
@@ -88,7 +89,7 @@ class SocketSessionButton extends StatelessWidget {
                       child: Text(
                         session.label ?? session.uri.host,
                         style: TextStyle(
-                          color: ThunderColors.of(context).gray,
+                          color: colors.gray,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -109,7 +110,7 @@ class SocketSessionButton extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: ThunderColors.of(context).brilliantAzure,
+                          color: colors.brilliantAzure,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -121,7 +122,7 @@ class SocketSessionButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: ThunderColors.of(context).cBlack,
+                        color: colors.cBlack,
                       ),
                     ),
                   ],
@@ -144,7 +145,7 @@ class SocketSessionButton extends StatelessWidget {
                       child: Text(
                         _stateChipText,
                         style: TextStyle(
-                          color: ThunderColors.of(context).cWhite,
+                          color: colors.cWhite,
                           fontWeight: FontWeight.w500,
                           fontSize: 11,
                         ),
@@ -158,7 +159,7 @@ class SocketSessionButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: ThunderColors.of(context).cBlack,
+                        color: colors.cBlack,
                       ),
                     ),
 
@@ -177,7 +178,7 @@ class SocketSessionButton extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: ThunderColors.of(context).cBlack,
+                          color: colors.cBlack,
                         ),
                       ),
                     },
@@ -192,9 +193,8 @@ class SocketSessionButton extends StatelessWidget {
   }
 }
 
-Color _stateColor(BuildContext context, SocketState state) => switch (state) {
-  SocketConnected() => ThunderColors.of(context).cGreen,
-  SocketConnecting() ||
-  SocketReconnecting() => ThunderColors.of(context).cYellow,
-  SocketDisconnected() => ThunderColors.of(context).cRed,
+Color _stateColor(ThunderColors colors, SocketState state) => switch (state) {
+  SocketConnected() => colors.cGreen,
+  SocketConnecting() || SocketReconnecting() => colors.cYellow,
+  SocketDisconnected() => colors.cRed,
 };

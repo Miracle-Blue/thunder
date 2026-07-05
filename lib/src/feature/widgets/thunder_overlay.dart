@@ -316,8 +316,9 @@ class _ThunderState extends ThunderOverlayController {
               onHorizontalDragEnd: dismissed ? null : onHorizontalDragEnd,
               child: Stack(
                 children: <Widget>[
-                  // The main app content
-                  widget.child,
+                  // The main app content, repaint-isolated from the
+                  // animating panel and barrier.
+                  RepaintBoundary(child: widget.child),
                   // Semi-transparent barrier behind the overlay when open
                   if (!dismissed)
                     AnimatedModalBarrier(
@@ -349,9 +350,14 @@ class _ThunderState extends ThunderOverlayController {
                         ),
                       ),
                     ),
-                    child: Theme(
-                      data: _panelTheme,
-                      child: SizedBox(width: width, child: _materialContext()),
+                    child: RepaintBoundary(
+                      child: Theme(
+                        data: _panelTheme,
+                        child: SizedBox(
+                          width: width,
+                          child: _materialContext(),
+                        ),
+                      ),
                     ),
                   ),
                 ],
