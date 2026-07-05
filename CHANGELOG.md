@@ -1,3 +1,20 @@
+## 1.1.0-dev.4
+
+- HTTP search fixed: logs that arrived or completed while a search was active were silently lost or leaked into the filtered view; search now filters a live view of the canonical list (same pattern as the Socket tab)
+- Middleware now captures every exception, not just `ApiClientException` — a throwing handler no longer leaves the row spinning forever
+- `sendBytes` fixed: it measured the stringified byte list (~4-5x inflated) instead of the request body bytes
+- Copying a still-loading log or a log with a non-`ApiClientException` error no longer crashes; duplicate `Status:` line removed
+- Secure lock icon now renders for `https` requests (the check could never match before)
+- Sorting is deterministic: `null` fields sort last instead of comparing against `DateTime.now()`/`Duration.zero`
+- Rebuild scope narrowed: a log event now rebuilds only its own tab's list instead of the whole logs screen (navbar, TabBar and both tabs)
+- `RepaintBoundary` added around the host app and the sliding panel, so opening/dragging the overlay no longer repaints the application
+- `LogButton` converted to a `StatelessWidget`; theme colors and status code resolved once per row build; `MediaQuery.sizeOf` used instead of full `MediaQuery` subscriptions
+- Memory capped: at most 1000 HTTP logs, socket sessions and per-session timeline events are retained (oldest dropped); previously everything grew unbounded
+- `SocketClient` applies a 30-second default dial timeout when `connectTimeout` is null — a never-settling dial no longer wedges the reconnect loop or makes `close()` hang forever
+- JSON pretty-printing works on web: `compute` replaces `Isolate.spawn` (which threw `UnsupportedError` in browsers)
+- Detail screens no longer require a `Material` ancestor (root `InkWell` replaced with `GestureDetector`)
+- HTTP core test coverage added (middleware, search, sort, copy); README and pubspec description updated from the removed Dio API to the actual `package:http` middleware setup
+
 ## 1.1.0-dev.3
 
 - Overlay screen backgrounds now blend with `Color.lerp` for a smoother, less flat panel look

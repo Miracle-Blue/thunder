@@ -34,7 +34,7 @@ Add Thunder to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  thunder: ^1.1.0-dev.3
+  thunder: ^1.1.0-dev.4
 ```
 
 Then run:
