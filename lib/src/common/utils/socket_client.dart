@@ -72,7 +72,7 @@ class SocketClient {
   final Duration reconnectInterval;
 
   /// Maximum time a single connection attempt may take before it is
-  /// aborted and retried. Unlimited when `null`.
+  /// aborted and retried. Defaults to 30 seconds when `null`.
   final Duration? connectTimeout;
 
   /// Interval of protocol-level ping frames keeping the connection alive.
@@ -183,8 +183,10 @@ class SocketClient {
     _channel = channel;
 
     try {
-      final timeout = connectTimeout;
-      await (timeout == null ? channel.ready : channel.ready.timeout(timeout));
+      // A dial with no timeout can await channel.ready forever, wedging
+      // both the reconnect loop and close(); cap it.
+      final timeout = connectTimeout ?? const Duration(seconds: 30);
+      await channel.ready.timeout(timeout);
     } on Object catch (error, stackTrace) {
       unawaited(_closeChannelQuietly(channel, status.goingAway));
       if (identical(_channel, channel)) _channel = null;

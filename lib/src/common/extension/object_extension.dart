@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:isolate';
+
+import 'package:flutter/foundation.dart';
 
 /// Extension on [Object] to convert it to a pretty JSON string.
 extension ObjectExtension on Object? {
-  /// Convert the object to a pretty JSON string asynchronously
-  /// using an isolate.
+  /// Convert the object to a pretty JSON string on a background isolate
+  /// (on the main isolate on web, where isolates are unavailable).
   /// This method is asynchronous and returns a
   /// [Future] that resolves to a [String].
   ///
@@ -15,13 +16,7 @@ extension ObjectExtension on Object? {
   Future<String> get prettyJsonAsync async {
     if (this == null) return 'null';
 
-    final receivePort = ReceivePort();
-    await Isolate.spawn<List<Object?>>(_prettyJsonIsolate, [
-      receivePort.sendPort,
-      this,
-    ]);
-
-    return (await receivePort.first).toString();
+    return compute(_prettyJson, this);
   }
 
   /// Convert the object to a pretty JSON string synchronously.
@@ -51,13 +46,5 @@ extension ObjectExtension on Object? {
   }
 }
 
-void _prettyJsonIsolate(List<Object?> args) {
-  final sendPort = args[0] as SendPort;
-  final data = args[1];
-
-  final prettyJson = const JsonEncoder.withIndent('  ').convert(data);
-  sendPort.send(prettyJson);
-
-  // Close the isolate
-  Isolate.exit();
-}
+String _prettyJson(Object? data) =>
+    const JsonEncoder.withIndent('  ').convert(data);

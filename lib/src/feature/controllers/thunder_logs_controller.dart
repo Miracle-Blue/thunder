@@ -48,6 +48,9 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen>
   /// The list of network logs.
   static List<ThunderNetworkLog> networkLogs = <ThunderNetworkLog>[];
 
+  /// Maximum retained HTTP logs and socket sessions; oldest are dropped.
+  static const int maxLogs = 1000;
+
   /// The currently visible section (tab) of the logs screen.
   ///
   /// The screen updates it on tab changes; the overlay toolbar and the
@@ -119,6 +122,8 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen>
             networkLogs[index] = log;
           } else {
             networkLogs.add(log);
+            // ponytail: O(n) drop-oldest; fine at cap 1000.
+            if (networkLogs.length > maxLogs) networkLogs.removeAt(0);
           }
 
           _instance?.logNotifier.notify();
@@ -152,6 +157,9 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen>
         label: label,
       );
       _allSocketSessions.add(session);
+      if (_allSocketSessions.length > maxLogs) {
+        _allSocketSessions.removeAt(0);
+      }
     }
 
     session.addEvent(log);

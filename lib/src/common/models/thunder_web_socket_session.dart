@@ -34,6 +34,10 @@ final class ThunderWebSocketSession extends ChangeNotifier
   /// When the session was first seen.
   final DateTime createdAt;
 
+  /// Maximum retained timeline events; oldest are dropped. Counters keep
+  /// accumulating across the whole connection lifetime.
+  static const int _maxEvents = 1000;
+
   final List<ThunderWebSocketLog> _events = <ThunderWebSocketLog>[];
 
   /// Live, read-only view of the session's chronological events.
@@ -72,6 +76,7 @@ final class ThunderWebSocketSession extends ChangeNotifier
   /// listeners.
   void addEvent(ThunderWebSocketLog log) {
     _events.add(log);
+    if (_events.length > _maxEvents) _events.removeAt(0);
 
     switch (log.direction) {
       case ThunderWebSocketDirection.sent:
