@@ -228,6 +228,39 @@ void main() {
       },
     );
 
+    test(
+      'close completes while a silent dial is in flight',
+      timeout: testTimeout,
+      () async {
+        // A raw TCP server that accepts and never answers the upgrade:
+        // channel.ready would hang forever without the dial timeout.
+        final accepted = <Socket>[];
+        final silent = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+        silent.listen(accepted.add);
+        addTearDown(() async {
+          for (final socket in accepted) {
+            socket.destroy();
+          }
+          await silent.close();
+        });
+
+        final client = SocketClient(
+          uri: Uri.parse('ws://127.0.0.1:${silent.port}'),
+          reconnectInterval: const Duration(milliseconds: 100),
+          connectTimeout: const Duration(milliseconds: 200),
+        );
+
+        final connectFuture = client.connect();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        // Must not hang on the in-flight dial.
+        await client.close().timeout(const Duration(seconds: 5));
+        await connectFuture;
+
+        expect(client.state, isA<SocketDisconnected>());
+      },
+    );
+
     test('send rejects invalid payloads and states', () async {
       final server = await EchoServer.bind();
       addTearDown(server.shutdown);
