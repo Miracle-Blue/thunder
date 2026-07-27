@@ -18,11 +18,32 @@ abstract class ThunderWsLogDetailController
   /// Scroll controller for the timeline list.
   final ScrollController scrollController = ScrollController();
 
+  /// Whether the timeline is scrolled away from the bottom, so the
+  /// scroll-to-bottom button should be visible.
+  bool showScrollToBottom = false;
+
   bool get _isNearBottom {
     if (!scrollController.hasClients) return true;
 
     final position = scrollController.position;
     return position.pixels >= position.maxScrollExtent - 100;
+  }
+
+  void _onScroll() {
+    final away = !_isNearBottom;
+    if (away != showScrollToBottom) {
+      setState(() => showScrollToBottom = away);
+    }
+  }
+
+  /// Scrolls the timeline to the newest event.
+  void onScrollToBottomTap() {
+    if (!scrollController.hasClients) return;
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   void _onSessionChanged() {
@@ -73,6 +94,7 @@ abstract class ThunderWsLogDetailController
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(_onScroll);
     widget.session.addListener(_onSessionChanged);
   }
 

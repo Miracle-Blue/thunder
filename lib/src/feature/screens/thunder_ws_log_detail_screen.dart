@@ -78,14 +78,33 @@ class _ThunderWsLogDetailScreenState extends ThunderWsLogDetailController {
             alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.only(right: 24, bottom: 32),
-              child: FloatingActionButton(
-                onPressed: onCopyTranscriptTap,
-                tooltip: 'Copy session transcript',
-                backgroundColor: ThunderColors.of(context).surface,
-                child: Icon(
-                  Icons.copy_all_rounded,
-                  color: ThunderColors.of(context).cBlack,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (showScrollToBottom) ...[
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      onPressed: onScrollToBottomTap,
+                      tooltip: 'Scroll to bottom',
+                      backgroundColor: ThunderColors.of(context).surface,
+                      child: Icon(
+                        Icons.arrow_downward_rounded,
+                        color: ThunderColors.of(context).cBlack,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  FloatingActionButton(
+                    onPressed: onCopyTranscriptTap,
+                    tooltip: 'Copy session transcript',
+                    backgroundColor: ThunderColors.of(context).surface,
+                    child: Icon(
+                      Icons.copy_all_rounded,
+                      color: ThunderColors.of(context).cBlack,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

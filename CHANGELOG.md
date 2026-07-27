@@ -1,3 +1,7 @@
+## 1.1.0-dev.5
+
+- Socket session detail screen: a scroll-to-bottom button now appears when the timeline is scrolled away from the newest event
+
 ## 1.1.0-dev.4
 
 - HTTP search fixed: logs that arrived or completed while a search was active were silently lost or leaked into the filtered view; search now filters a live view of the canonical list (same pattern as the Socket tab)
