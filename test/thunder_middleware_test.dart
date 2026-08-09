@@ -98,5 +98,64 @@ void main() {
       expect(done.error, isA<StateError>());
       expect(done.duration, isNotNull);
     });
+
+    test('disabled middleware passes through without logging', () async {
+      final logs = <ThunderNetworkLog>[];
+      final middleware = ThunderMiddleware(
+        onNetworkActivity: logs.add,
+        enabled: false,
+      );
+
+      final handler = middleware.call(
+        (request, context) async => _response(request),
+      );
+
+      final response = await handler(_request(body: '{"a":1}'), {});
+
+      expect(response.statusCode, 200);
+      expect(logs, isEmpty);
+    });
+
+    test('disabled middleware still propagates errors, silently', () async {
+      final logs = <ThunderNetworkLog>[];
+      final middleware = ThunderMiddleware(
+        onNetworkActivity: logs.add,
+        enabled: false,
+      );
+
+      final handler = middleware.call(
+        (request, context) async => throw const _TestException(),
+      );
+
+      await expectLater(
+        () => handler(_request(), {}),
+        throwsA(isA<_TestException>()),
+      );
+
+      expect(logs, isEmpty);
+    });
+
+    test('enabled is checked per request, not at wrap time', () async {
+      final logs = <ThunderNetworkLog>[];
+      final middleware = ThunderMiddleware(onNetworkActivity: logs.add)
+        ..enabled = false;
+
+      // Wrapped once while disabled — the same handler must honor
+      // later flips of the flag.
+      final handler = middleware.call(
+        (request, context) async => _response(request),
+      );
+
+      await handler(_request(), {});
+      expect(logs, isEmpty);
+
+      middleware.enabled = true;
+      await handler(_request(), {});
+      expect(logs, hasLength(2), reason: 'loading + completed');
+
+      middleware.enabled = false;
+      await handler(_request(), {});
+      expect(logs, hasLength(2));
+    });
   });
 }

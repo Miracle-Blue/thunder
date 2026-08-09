@@ -27,9 +27,13 @@ typedef ThunderWebSocketLogCallback = void Function(ThunderWebSocketLog log);
 /// ```
 class ThunderWebSocketInterceptor {
   /// Creates an interceptor for a single WebSocket connection to [uri].
-  ThunderWebSocketInterceptor({required this.uri, this.label, this.onLog})
-    : connectionId =
-          '${DateTime.now().microsecondsSinceEpoch}-${_connectionSeq++}';
+  ThunderWebSocketInterceptor({
+    required this.uri,
+    this.label,
+    this.onLog,
+    this.enabled = true,
+  }) : connectionId =
+           '${DateTime.now().microsecondsSinceEpoch}-${_connectionSeq++}';
 
   /// The remote endpoint of the connection.
   final Uri uri;
@@ -42,6 +46,13 @@ class ThunderWebSocketInterceptor {
 
   /// Unique identifier of the connection (session) this interceptor logs.
   final String connectionId;
+
+  /// Whether the interceptor records events.
+  ///
+  /// When `false` all `log*` calls are dropped and nothing reaches
+  /// [onLog] — the connection leaves no trace in the Thunder panel.
+  /// Mutable: flip at runtime to pause/resume recording.
+  bool enabled;
 
   static int _connectionSeq = 0;
 
@@ -97,22 +108,26 @@ class ThunderWebSocketInterceptor {
     String? closeReason,
     Object? error,
     StackTrace? stackTrace,
-  }) => onLog?.call(
-    ThunderWebSocketLog(
-      id: '$connectionId-${_eventSeq++}',
-      connectionId: connectionId,
-      uri: uri,
-      direction: direction,
-      timestamp: DateTime.now(),
-      byteSize: byteSize,
-      message: message,
-      state: state,
-      closeCode: closeCode,
-      closeReason: closeReason,
-      error: error,
-      stackTrace: stackTrace,
-    ),
-  );
+  }) {
+    if (!enabled) return;
+
+    onLog?.call(
+      ThunderWebSocketLog(
+        id: '$connectionId-${_eventSeq++}',
+        connectionId: connectionId,
+        uri: uri,
+        direction: direction,
+        timestamp: DateTime.now(),
+        byteSize: byteSize,
+        message: message,
+        state: state,
+        closeCode: closeCode,
+        closeReason: closeReason,
+        error: error,
+        stackTrace: stackTrace,
+      ),
+    );
+  }
 }
 
 int _byteSizeOf(Object? data) => switch (data) {

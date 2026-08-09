@@ -81,6 +81,18 @@ class Thunder extends StatefulWidget {
   static ApiClientMiddleware get middleware =>
       ThunderLogsController.getMiddleware.call;
 
+  /// Whether [middleware] records HTTP activity.
+  ///
+  /// When `false` the middleware is a pure pass-through: requests reach
+  /// your handler untouched and nothing is collected or shown in the
+  /// panel. Takes effect on the next request; requests already in
+  /// flight still complete their log entry.
+  static bool get middlewareEnabled =>
+      ThunderLogsController.getMiddleware.enabled;
+
+  static set middlewareEnabled(bool value) =>
+      ThunderLogsController.getMiddleware.enabled = value;
+
   /// Creates a reconnecting [SocketClient] whose whole lifecycle — frames,
   /// state changes and errors — is recorded in Thunder's Socket tab.
   ///
@@ -100,6 +112,11 @@ class Thunder extends StatefulWidget {
   /// The client reconnects on its own until [SocketClient.close] is called;
   /// closing is final — create a new client to connect again. [headers] and
   /// [pingInterval] only apply on `dart:io` platforms.
+  ///
+  /// Pass `enabled: false` to keep the connection out of the Thunder
+  /// panel entirely — a creation-time switch. For runtime toggling,
+  /// construct the interceptor yourself and pass it to
+  /// [SocketClient.new] instead.
   static SocketClient socketClient({
     required Uri uri,
     String? label,
@@ -108,6 +125,7 @@ class Thunder extends StatefulWidget {
     Duration reconnectInterval = const Duration(seconds: 5),
     Duration? connectTimeout,
     Duration? pingInterval,
+    bool enabled = true,
   }) => SocketClient(
     uri: uri,
     protocols: protocols,
@@ -115,7 +133,11 @@ class Thunder extends StatefulWidget {
     reconnectInterval: reconnectInterval,
     connectTimeout: connectTimeout,
     pingInterval: pingInterval,
-    interceptor: ThunderLogsController.socketLogger(uri: uri, label: label),
+    interceptor: ThunderLogsController.socketLogger(
+      uri: uri,
+      label: label,
+      enabled: enabled,
+    ),
   );
 
   /// Creates a logging hook for a self-managed WebSocket connection.
@@ -134,10 +156,19 @@ class Thunder extends StatefulWidget {
   /// logger.logSent('hello');
   /// channel.sink.add('hello');
   /// ```
+  ///
+  /// Pass `enabled: false` to start silenced; flip
+  /// [ThunderWebSocketInterceptor.enabled] on the returned instance to
+  /// pause or resume recording at runtime.
   static ThunderWebSocketInterceptor webSocketInterceptor({
     required Uri uri,
     String? label,
-  }) => ThunderLogsController.socketLogger(uri: uri, label: label);
+    bool enabled = true,
+  }) => ThunderLogsController.socketLogger(
+    uri: uri,
+    label: label,
+    enabled: enabled,
+  );
 
   @override
   State<Thunder> createState() => _ThunderState();

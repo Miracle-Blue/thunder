@@ -85,6 +85,15 @@ class MyApp extends StatelessWidget {
 client can be constructed anywhere — requests made before the overlay mounts
 are captured once it appears.
 
+### Pausing collection
+
+Set `Thunder.middlewareEnabled = false` to turn the middleware into a pure
+pass-through: requests flow unchanged and nothing is collected or shown in
+the panel. Set it back to `true` to resume. Socket interceptors have the
+same switch — `Thunder.socketClient(enabled: false)` /
+`Thunder.webSocketInterceptor(enabled: false)` at creation time, or flip
+`enabled` on a `ThunderWebSocketInterceptor` at runtime.
+
 ### How to Use
 
 1. Run your app in debug mode

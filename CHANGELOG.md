@@ -1,3 +1,10 @@
+## 1.1.0-dev.6
+
+- Interceptors can now be turned off: a disabled interceptor is a pure pass-through — traffic flows unchanged and nothing is collected or shown in the panel
+  - `Thunder.middlewareEnabled` pauses/resumes HTTP recording at runtime
+  - `Thunder.socketClient(enabled: false)` / `Thunder.webSocketInterceptor(enabled: false)` create silenced socket interceptors; `ThunderWebSocketInterceptor.enabled` is mutable for runtime toggling
+- The shared HTTP middleware is now app-lifetime: it is no longer reset when the overlay unmounts, so the captured tear-off and the toggle always address the same instance
+
 ## 1.1.0-dev.5
 
 - Socket session detail screen: a scroll-to-bottom button now appears when the timeline is scrolled away from the newest event

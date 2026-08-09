@@ -77,6 +77,30 @@ void main() {
       expect(logs.single.byteSize, 3);
     });
 
+    test('disabled interceptor drops every event until re-enabled', () {
+      final logs = <ThunderWebSocketLog>[];
+      final interceptor =
+          ThunderWebSocketInterceptor(
+              uri: Uri.parse('ws://a'),
+              onLog: logs.add,
+              enabled: false,
+            )
+            ..logSent('abc')
+            ..logReceived(<int>[1, 2])
+            ..logState(const SocketConnected())
+            ..logError(StateError('boom'))
+            ..logSystem('note');
+
+      expect(logs, isEmpty);
+
+      interceptor
+        ..enabled = true
+        ..logSent('abc');
+
+      expect(logs, hasLength(1));
+      expect(logs.single.direction.isSent, isTrue);
+    });
+
     test('state logs render human-readable text', () {
       final logs = <ThunderWebSocketLog>[];
       ThunderWebSocketInterceptor(uri: Uri.parse('ws://a'), onLog: logs.add)

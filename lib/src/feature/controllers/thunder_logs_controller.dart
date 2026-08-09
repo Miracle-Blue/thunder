@@ -136,9 +136,11 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen>
   static ThunderWebSocketInterceptor socketLogger({
     required Uri uri,
     String? label,
+    bool enabled = true,
   }) => ThunderWebSocketInterceptor(
     uri: uri,
     label: label,
+    enabled: enabled,
     onLog: (log) => _onWebSocketLog(log, label: label),
   );
 
@@ -330,9 +332,10 @@ abstract class ThunderLogsController extends State<ThunderLogsScreen>
 
   @override
   void dispose() {
-    // Remove all interceptors
-    _middlewareInstance = null;
-
+    // _middlewareInstance is deliberately NOT reset here: user code holds
+    // the middleware tear-off for the app's lifetime, and Thunder.
+    // middlewareEnabled must keep addressing that same instance across
+    // overlay remounts.
     tabController
       ..removeListener(_onTabChanged)
       ..dispose();

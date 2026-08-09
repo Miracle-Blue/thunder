@@ -1,23 +1,30 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http_package;
 
 import '../extension/middleware_extensions.dart';
 import '../models/thunder_network_log.dart';
 
 /// Middleware for Thunder
-@immutable
 class ThunderMiddleware {
   /// Constructor for the [ThunderMiddleware] class.
-  const ThunderMiddleware({required this.onNetworkActivity});
+  ThunderMiddleware({required this.onNetworkActivity, this.enabled = true});
 
   /// The callback to call when a network activity is detected
   final void Function(ThunderNetworkLog log) onNetworkActivity;
 
+  /// Whether the middleware records network activity.
+  ///
+  /// Checked per request: when `false` the request is passed straight
+  /// to the inner handler and no log is emitted. Can be flipped at
+  /// runtime; requests already in flight still complete their log entry.
+  bool enabled;
+
   /// The handler for the middleware
   ApiClientHandler call(ApiClientHandler innerHandler) =>
       (request, context) async {
+        if (!enabled) return innerHandler(request, context);
+
         final startTime = DateTime.now();
         final logId = DateTime.now().microsecondsSinceEpoch.toString();
 
