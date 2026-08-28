@@ -1,3 +1,8 @@
+## 1.1.0-dev.7
+
+- Fixed `unused_catch_stack` warning flagged by the pub.dev analyzer (`catch (error, _)` → `catch (error)`)
+- Added the missing library doc comment for `package:thunder/thunder.dart`
+
 ## 1.1.0-dev.6
 
 - Interceptors can now be turned off: a disabled interceptor is a pure pass-through — traffic flows unchanged and nothing is collected or shown in the panel
