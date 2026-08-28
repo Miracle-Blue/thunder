@@ -1,3 +1,6 @@
+/// Thunder — a Flutter HTTP network inspector overlay.
+library;
+
 export 'src/common/extension/curl_extension.dart';
 export 'src/common/extension/middleware_extensions.dart';
 export 'src/common/models/socket_state.dart';

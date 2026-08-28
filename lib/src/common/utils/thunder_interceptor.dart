@@ -63,7 +63,7 @@ class ThunderMiddleware {
           );
 
           return response;
-        } on ApiClientException catch (error, _) {
+        } on ApiClientException catch (error) {
           final duration = DateTime.now().difference(startTime);
           onNetworkActivity(
             log.copyWith(
