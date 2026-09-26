@@ -2,6 +2,7 @@
 
 - `Thunder(fontFamily: ...)` sets the panel font (default `'FreeMono'`, previously hard-coded `'Monospace'`); the family must be declared in the host app's `pubspec.yaml`, otherwise the platform default font is used
 - Panel title now derives from the theme's `titleLarge` style, so it follows the configured font family
+- `http` dependency relaxed from the exact pin `1.6.0` to `^1.6.0`, so apps can resolve it alongside newer `http` 1.x releases
 
 ## 1.1.0-dev.7
 
