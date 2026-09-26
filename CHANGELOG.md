@@ -1,3 +1,8 @@
+## 1.1.0-dev.8
+
+- `Thunder(fontFamily: ...)` sets the panel font (default `'FreeMono'`, previously hard-coded `'Monospace'`); the family must be declared in the host app's `pubspec.yaml`, otherwise the platform default font is used
+- Panel title now derives from the theme's `titleLarge` style, so it follows the configured font family
+
 ## 1.1.0-dev.7
 
 - Fixed `unused_catch_stack` warning flagged by the pub.dev analyzer (`catch (error, _)` → `catch (error)`)
