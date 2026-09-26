@@ -1,3 +1,11 @@
+## 1.1.0-dev.9
+
+- Response tab: large JSON bodies scroll smoothly on iOS — the body is rendered line by line, so only visible lines are laid out and painted (previously one giant `SelectableText` redrew the whole body every frame and scrolling froze); selection is now per line, the copy button still copies the full body
+- `CopyableText` no longer scrolls itself: drags, mouse wheel and trackpad go to the parent list, and multi-line text no longer draws its own scrollbar
+- All panel text styles derive from `Theme.of(context).textTheme` (`titleMedium` / `bodyMedium` / `bodySmall` + `copyWith`), so `Thunder(fontFamily: ...)` applies everywhere — including the HTTP and Socket detail screen titles, which previously fell back to the Cupertino system font
+- Default `CopyableText` size reduced from 12.5 to 11
+- Regression test for lazy, scrollable large response bodies
+
 ## 1.1.0-dev.8
 
 - `Thunder(fontFamily: ...)` sets the panel font (default `'FreeMono'`, previously hard-coded `'Monospace'`); the family must be declared in the host app's `pubspec.yaml`, otherwise the platform default font is used
