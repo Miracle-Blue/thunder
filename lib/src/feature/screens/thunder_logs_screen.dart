@@ -48,9 +48,8 @@ class _ThunderLogsScreenState extends ThunderLogsController {
           true => null,
           false => Text(
             'Thunder Network Monitor',
-            style: TextStyle(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: ThunderColors.of(context).cWhite,
-              fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
           ),

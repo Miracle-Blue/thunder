@@ -45,6 +45,7 @@ class Thunder extends StatefulWidget {
   const Thunder({
     required this.child,
     this.enabled = kDebugMode,
+    this.fontFamily = 'FreeMono',
     this.duration = const Duration(milliseconds: 250),
     this.color,
     super.key,
@@ -66,6 +67,9 @@ class Thunder extends StatefulWidget {
   ///
   /// When null, the handle uses the ambient [Material] default color.
   final Color? color;
+
+  /// The font family of the [Thunder] logs.
+  final String fontFamily;
 
   /// The child widget (the main widget of the app).
   ///
@@ -178,11 +182,11 @@ class _ThunderState extends ThunderOverlayController {
   // Fixed dark theme for the panel. Built from the dark base (never from
   // the host theme, whose light text colors would leak into the panel) and
   // pinning ThunderColors.dark so the panel is dark regardless of the app.
-  static final ThemeData _panelTheme = () {
+  static ThemeData _panelTheme(String fontFamily) => () {
     final base = ThemeData.dark();
     return base.copyWith(
       extensions: const <ThemeExtension<Object?>>[ThunderColors.dark],
-      textTheme: base.textTheme.apply(fontFamily: 'Monospace'),
+      textTheme: base.textTheme.apply(fontFamily: fontFamily),
     );
   }();
 
@@ -383,7 +387,7 @@ class _ThunderState extends ThunderOverlayController {
                     ),
                     child: RepaintBoundary(
                       child: Theme(
-                        data: _panelTheme,
+                        data: _panelTheme(widget.fontFamily),
                         child: SizedBox(
                           width: width,
                           child: _materialContext(),

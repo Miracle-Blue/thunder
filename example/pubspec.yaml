@@ -25,6 +25,6 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: Monospace
+    - family: FreeMono
       fonts:
-        - asset: assets/fonts/Monospace.ttf
+        - asset: assets/fonts/FreeMonoBold.ttf
