@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../extension/middleware_extensions.dart';
@@ -26,6 +26,7 @@ abstract class Helpers {
     String content = 'Copied to your clipboard!',
   }) {
     final colors = ThunderColors.of(context);
+    final textTheme = Theme.of(context).textTheme;
 
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
@@ -40,7 +41,10 @@ abstract class Helpers {
               border: Border.all(color: colors.gray),
               borderRadius: BorderRadius.circular(48),
             ),
-            child: Text(content, style: TextStyle(color: colors.cWhite)),
+            child: Text(
+              content,
+              style: textTheme.bodyMedium?.copyWith(color: colors.cWhite),
+            ),
           ),
         ),
       ),

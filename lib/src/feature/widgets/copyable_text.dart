@@ -24,12 +24,17 @@ class _CopyableTextState extends State<CopyableText> {
     widget.value ?? 'null',
     style:
         (widget.style ??
-                TextStyle(
-                  fontSize: 12.5,
+                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 11,
                   color: ThunderColors.of(context).cBlack,
                   fontWeight: FontWeight.w500,
                 ))
-            .copyWith(height: 1, letterSpacing: -0.05),
+            ?.copyWith(height: 1, letterSpacing: -0.05),
+    // Display-only text: leave drags, wheel and scrollbars to the parent list.
+    scrollPhysics: const NeverScrollableScrollPhysics(),
+    scrollBehavior: ScrollConfiguration.of(
+      context,
+    ).copyWith(scrollbars: false, overscroll: false),
     contextMenuBuilder: (context, editableTextState) =>
         AdaptiveTextSelectionToolbar.buttonItems(
           buttonItems: [

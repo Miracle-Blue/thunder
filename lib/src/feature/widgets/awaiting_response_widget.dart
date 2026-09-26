@@ -27,7 +27,7 @@ class AwaitingResponseWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             message,
-            style: TextStyle(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: ThunderColors.of(context).cBlack,
               fontWeight: FontWeight.w500,
             ),

@@ -67,9 +67,12 @@ class _SortByAlertDialogState extends State<_SortByAlertDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text(
+    title: Text(
       'Sort by',
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
     ),
     content: Column(
       mainAxisSize: MainAxisSize.min,

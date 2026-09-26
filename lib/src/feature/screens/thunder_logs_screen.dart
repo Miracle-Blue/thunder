@@ -133,7 +133,7 @@ class _EmptyState extends StatelessWidget {
         Icon(icon, size: 48, color: ThunderColors.of(context).gray),
         Text(
           message,
-          style: TextStyle(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: ThunderColors.of(context).gray,
             fontWeight: FontWeight.w600,
           ),

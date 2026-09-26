@@ -60,13 +60,15 @@ class _ListRowItemState extends State<ListRowItem> {
                         (widget.name?.isNotEmpty ?? false)) ...[
                       CopyableText(
                         value: '${widget.name}:',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(width: 4),
                     ],
                     CopyableText(
                       value: widget.value ?? 'null',
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 12.5,
                         color: ThunderColors.of(context).cBlack,
                         fontWeight: FontWeight.w500,
@@ -83,14 +85,16 @@ class _ListRowItemState extends State<ListRowItem> {
                         (widget.name?.isNotEmpty ?? false)) ...[
                       CopyableText(
                         value: '${widget.name}:',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(width: 4),
                     ],
                     Flexible(
                       child: CopyableText(
                         value: widget.value ?? 'null',
-                        style: TextStyle(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 12.5,
                           color: ThunderColors.of(context).cBlack,
                           fontWeight: FontWeight.w500,

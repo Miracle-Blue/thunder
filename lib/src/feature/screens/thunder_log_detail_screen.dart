@@ -45,7 +45,7 @@ class _ThunderLogDetailScreenState extends ThunderLogDetailController {
         ),
         middle: Text(
           'THUNDER - HTTP Request detail',
-          style: TextStyle(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w500,
             color: ThunderColors.of(context).cWhite,

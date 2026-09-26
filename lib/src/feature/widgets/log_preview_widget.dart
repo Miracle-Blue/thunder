@@ -69,11 +69,14 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
       rows.addAll(_buildBodyRows());
     } else if (widget.log.error != null) {
       rows.addAll([
-        const Row(
+        Row(
           children: [
             Text(
               'Error Details',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
           ],
         ),
@@ -108,9 +111,14 @@ class _LogPreviewWidgetState extends State<LogPreviewWidget> {
   List<Widget> _buildImageBodyRows() => [
     Column(
       children: [
-        const Row(
+        Row(
           children: [
-            Text('Body: Image', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Body: Image',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         const SizedBox(height: 8),

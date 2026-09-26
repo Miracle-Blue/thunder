@@ -44,7 +44,7 @@ class _ThunderWsLogDetailScreenState extends ThunderWsLogDetailController {
         ),
         title: Text(
           'Socket session',
-          style: TextStyle(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w500,
             color: ThunderColors.of(context).cWhite,
@@ -158,7 +158,7 @@ class _SessionSummary extends StatelessWidget {
                   session.label ?? session.uri.toString(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: ThunderColors.of(context).brilliantAzure,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -173,7 +173,7 @@ class _SessionSummary extends StatelessWidget {
             ' · ↑${session.sentCount} ↓${session.receivedCount}'
             ' · ${Helpers.formatBytes(session.totalBytes)}'
             ' · started ${session.createdAt.formatHHmmssSSS}',
-            style: TextStyle(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: ThunderColors.of(context).gray,
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -275,7 +275,7 @@ class _FrameCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 title,
-                style: TextStyle(
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: accent,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
@@ -288,7 +288,7 @@ class _FrameCard extends StatelessWidget {
             log.messageText,
             maxLines: 12,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: ThunderColors.of(context).cBlack,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -298,7 +298,7 @@ class _FrameCard extends StatelessWidget {
           Text(
             '${log.timestamp.formatHHmmssSSS}'
             ' · ${Helpers.formatBytes(log.byteSize)}',
-            style: TextStyle(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: ThunderColors.of(context).gray,
               fontSize: 9,
               fontWeight: FontWeight.w600,
@@ -339,7 +339,7 @@ class _EventPill extends StatelessWidget {
           Flexible(
             child: Text(
               '${log.messageText} · ${log.timestamp.formatHHmmssSSS}',
-              style: TextStyle(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: color,
                 fontSize: 10,
                 fontStyle: FontStyle.italic,

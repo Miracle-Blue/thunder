@@ -46,6 +46,7 @@ class LogButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = ThunderColors.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final statusCode = Helpers.getStatusCode(log);
 
     return GestureDetector(
@@ -85,7 +86,7 @@ class LogButton extends StatelessWidget {
                       Expanded(
                         child: Text(
                           log.request.url.host,
-                          style: TextStyle(
+                          style: textTheme.bodySmall?.copyWith(
                             color: colors.gray,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -106,7 +107,7 @@ class LogButton extends StatelessWidget {
                         log.request.url.path,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: colors.brilliantAzure,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -119,7 +120,7 @@ class LogButton extends StatelessWidget {
                       Text(
                         '${Helpers.formatBytes(log.sendBytes)}'
                         ' / ${Helpers.formatBytes(log.receiveBytes)}',
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: colors.cBlack,
@@ -142,7 +143,7 @@ class LogButton extends StatelessWidget {
                       ),
                       child: Text(
                         log.request.method,
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: colors.cWhite,
                           fontWeight: FontWeight.w500,
                           fontSize: 11,
@@ -154,7 +155,7 @@ class LogButton extends StatelessWidget {
                     /// Request Time | Request duration
                     Text(
                       _requestTimeDuration,
-                      style: TextStyle(
+                      style: textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: colors.cBlack,
@@ -173,7 +174,7 @@ class LogButton extends StatelessWidget {
                       ),
                       false => Text(
                         statusCode,
-                        style: TextStyle(
+                        style: textTheme.bodyMedium?.copyWith(
                           color: switch (int.tryParse(statusCode)) {
                             int i when i >= 200 && i < 300 => colors.cGreen,
                             _ => colors.cRed,

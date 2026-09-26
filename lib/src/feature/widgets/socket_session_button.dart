@@ -37,6 +37,7 @@ class SocketSessionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = ThunderColors.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final stateColor = _stateColor(colors, session.state);
 
     return InkWell(
@@ -88,7 +89,7 @@ class SocketSessionButton extends StatelessWidget {
                     Expanded(
                       child: Text(
                         session.label ?? session.uri.host,
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: colors.gray,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -109,7 +110,7 @@ class SocketSessionButton extends StatelessWidget {
                         session.uri.toString(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: colors.brilliantAzure,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -119,7 +120,7 @@ class SocketSessionButton extends StatelessWidget {
                     Text(
                       '↑${session.sentCount} ↓${session.receivedCount}'
                       ' · ${Helpers.formatBytes(session.totalBytes)}',
-                      style: TextStyle(
+                      style: textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: colors.cBlack,
@@ -144,7 +145,7 @@ class SocketSessionButton extends StatelessWidget {
                       ),
                       child: Text(
                         _stateChipText,
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           color: colors.cWhite,
                           fontWeight: FontWeight.w500,
                           fontSize: 11,
@@ -156,7 +157,7 @@ class SocketSessionButton extends StatelessWidget {
                     /// Last activity time
                     Text(
                       session.lastEventAt.formatHHmmssSSS,
-                      style: TextStyle(
+                      style: textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: colors.cBlack,
@@ -175,7 +176,7 @@ class SocketSessionButton extends StatelessWidget {
                       ),
                       false => Text(
                         '${session.eventCount} events',
-                        style: TextStyle(
+                        style: textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: colors.cBlack,
